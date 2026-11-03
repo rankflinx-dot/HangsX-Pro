@@ -92,6 +92,35 @@ main{width:100%}
 @media(max-width:950px){.layout{grid-template-columns:1fr}.summary-card{order:-1}.product-nav a{padding:0 12px}}
 @media(max-width:560px){.account-strip{padding:0 10px}.account-left,.account-right{gap:8px}.account-left strong{font-size:12px}.account-pill{padding:6px 10px}.product-nav{height:44px}.product-nav a{font-size:11px;padding:0 10px}.topbar{padding:0 10px}.content{padding:12px 9px}.quick-search{max-width:none}.summary-grid{grid-template-columns:repeat(2,1fr)}}
 
+
+/* Multi-page workspace modules */
+.product-nav a{flex-shrink:0}
+.page-view{display:none}
+.page-view.active{display:block}
+.page-intro{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:4px 0 15px}
+.page-intro h1{margin:0 0 4px;font-size:21px;color:#17344b}
+.page-intro p{margin:0;color:#7b8992;font-size:12px}
+.module-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.module-tile{border:1px solid #e0e8ec;background:#fff;border-radius:8px;padding:16px;min-width:0}
+.module-tile h3{font-size:13px;margin:0 0 7px;color:#183b55}
+.module-tile p{font-size:11px;color:#75838c;margin:0 0 12px;line-height:1.6}
+.module-status{display:inline-block;border-radius:4px;padding:4px 7px;background:#edf3f6;color:#607481;font-size:9px;font-weight:800;letter-spacing:.4px}
+.module-status.ready{background:#e7f7ef;color:#14835e}
+.module-status.locked{background:#fff3e7;color:#a76517}
+.module-actions{display:flex;gap:8px;flex-wrap:wrap}
+.module-actions button,.module-actions a{border:1px solid #d6e1e6;background:#f7fafb;color:#21445d;border-radius:5px;padding:8px 10px;text-decoration:none;font-size:10px;font-weight:700}
+.ticket-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ticket-grid .field{min-width:0}
+.ticket-grid input,.ticket-grid select{width:100%;padding:9px;border:1px solid #d4dfe5;border-radius:6px;background:#fff;color:#183348}
+.metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.metric{background:#f7fafb;border:1px solid #e2eaee;border-radius:7px;padding:12px}
+.metric small{display:block;color:#77858d;font-size:10px}
+.metric b{display:block;color:#174b70;font-size:17px;margin-top:5px}
+.chart-frame{width:100%;height:510px;border:1px solid #dce5e9;border-radius:8px;background:#fff}
+.chart-frame iframe{width:100%;height:100%;border:0;border-radius:8px}
+.page-note{background:#f0f7fa;border:1px solid #dceaf0;border-radius:7px;padding:12px;color:#536c7b;font-size:11px;line-height:1.6;margin-top:12px}
+@media(max-width:700px){.module-grid,.ticket-grid{grid-template-columns:1fr}.metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.chart-frame{height:390px}.page-intro{align-items:flex-start;flex-direction:column}}
+
 </style></head>
 <body><div class="app">
 <aside class="sidebar">
@@ -111,9 +140,19 @@ main{width:100%}
 <main>
  <div class="account-strip"><div class="account-left"><span class="account-currency">KES</span><span>☎</span><strong>HedgeX Pro Workspace</strong></div><div class="account-right"><span class="account-status">● DEMO WORKSPACE</span><span class="account-pill">Account settings</span><span>⌄</span></div></div>
  <div class="ticker-strip">HEDGEX PRO MARKET DESK <span>WELCOME — DERIV INDICES, LIVE MARKET DATA AND YOUR OWN BOT WORKSPACE · READ-ONLY DEMO MODE</span></div>
- <nav class="product-nav"><a class="active" href="#overview"><span class="navico">⌂</span>Dashboard</a><a href="#bots"><span class="navico">⚙</span>Bot Builder</a><a href="#bots"><span class="navico">▣</span>Trading Bots</a><a href="#markets"><span class="navico">⌁</span>Bulk Trader</a><a href="#strategies"><span class="navico">♧</span>Pro AI</a><a href="#strategies"><span class="navico">⟳</span>Dual Edge</a><a href="#markets"><span class="navico">⌕</span>Analysis Tool</a><a href="#markets"><span class="navico">▥</span>Charts</a></nav>
+ <nav class="product-nav" aria-label="Main navigation">
+ <a class="active" href="#dashboard" data-page="dashboard"><span class="navico">⌂</span>Dashboard</a>
+ <a href="#bot-builder" data-page="bot-builder"><span class="navico">⚙</span>Bot Builder</a>
+ <a href="#free-bots" data-page="free-bots"><span class="navico">▣</span>Free Bots</a>
+ <a href="#copy-trading" data-page="copy-trading"><span class="navico">⧉</span>Copy Trading</a>
+ <a href="#manual-trading" data-page="manual-trading"><span class="navico">⇄</span>Manual Trading</a>
+ <a href="#charts" data-page="charts"><span class="navico">▥</span>Charts</a>
+ <a href="#analysis-tool" data-page="analysis-tool"><span class="navico">⌕</span>Analysis Tool</a>
+ <a href="#tradingview" data-page="tradingview"><span class="navico">◩</span>TradingView</a>
+</nav>
  <header class="topbar"><div class="crumb">HedgeX Pro <span style="color:#536680"> / </span><b>Overview</b></div><div class="topright"><span class="chip demo">DEMO MODE</span><span class="chip">STAGE 1 · READ ONLY</span><div class="avatar">H</div></div></header>
- <div class="content" id="overview">
+ <div class="content">
+  <section class="page-view active" id="page-dashboard" data-page-panel="dashboard">
   <div class="heading"><div><h1>Trading workspace</h1><p>Monitor Deriv Volatility Indices and manage your own strategy files.</p></div><div class="status"><i class="dot" id="dot"></i><span id="status">Market feed disconnected</span></div></div>
   <div class="banner"><div><b>Welcome to HedgeX Pro.</b> Your workspace is ready for your own bots. Connect to public market data to monitor live prices.</div><span>● NO LIVE TRADING</span></div>
   <div class="layout">
@@ -151,6 +190,56 @@ main{width:100%}
    </div>
   </div>
   <div class="footnote">HedgeX Pro is an independent dashboard prototype and is not affiliated with DollarPrinter or Deriv. Use a Deriv demo account for any future testing.</div>
+  </section>
+  <section class="page-view" id="page-bot-builder" data-page-panel="bot-builder">
+   <div class="page-intro"><div><h1>Bot Builder</h1><p>Bring your own bot files into your HedgeX Pro workspace.</p></div><span class="module-status ready">LOCAL FILE WORKSPACE</span></div>
+   <div class="module-grid">
+    <div class="module-tile"><h3>Import your bot</h3><p>Load your own DBot XML, JSON, JavaScript or text-based strategy file. Files remain in this browser and are not executed.</p><div class="module-actions"><button id="builderImport">＋ Import bot file</button><button id="builderMyBots">View bot library</button></div></div>
+    <div class="module-tile"><h3>Strategy configuration</h3><p>Set up your own HH Higher and HL Lower paper parameters. The two legs are separate contracts, not one guaranteed atomic trade.</p><div class="module-actions"><button id="builderStrategy">Open paper settings</button></div></div>
+   </div>
+   <div class="page-note">Bot execution is not available yet. This builder currently stores and lists selected files only; it does not run imported code.</div>
+  </section>
+  <section class="page-view" id="page-free-bots" data-page-panel="free-bots">
+   <div class="page-intro"><div><h1>Free Bots</h1><p>A library area for free strategies you choose to add.</p></div><span class="module-status">LIBRARY NOT CONNECTED</span></div>
+   <div class="module-tile"><h3>Your free bot collection</h3><p>No third-party bots have been added. You can import your own files in Bot Builder. We will not list invented or unverified bots as working strategies.</p><div class="module-actions"><button id="freeImport">＋ Add your bot file</button><button id="freeBuilder">Open Bot Builder</button></div></div>
+   <div class="page-note">A public bot catalogue, downloads, licensing checks and malware scanning would need to be implemented before this becomes a shared bot marketplace.</div>
+  </section>
+  <section class="page-view" id="page-copy-trading" data-page-panel="copy-trading">
+   <div class="page-intro"><div><h1>Copy Trading</h1><p>Workspace for following strategies and monitoring copied-trade settings.</p></div><span class="module-status locked">EXECUTION DISABLED</span></div>
+   <div class="module-grid">
+    <div class="module-tile"><h3>Strategy providers</h3><p>Provider discovery and verified performance history are not connected yet.</p><span class="module-status">NO PROVIDERS CONNECTED</span></div>
+    <div class="module-tile"><h3>Copy allocation</h3><p>Allocation, risk limits and stop-copy controls will be configured here after secure demo authorization.</p><span class="module-status locked">NOT ACTIVE</span></div>
+   </div>
+   <div class="page-note">Copy trading can place real orders when connected to a broker. No copying or order placement occurs in this version.</div>
+  </section>
+  <section class="page-view" id="page-manual-trading" data-page-panel="manual-trading">
+   <div class="page-intro"><div><h1>Manual Trading</h1><p>Deriv-style contract ticket layout for future demo testing.</p></div><span class="module-status locked">ORDER PLACEMENT DISABLED</span></div>
+   <div class="card">
+    <div class="cardhead"><h2>CONTRACT TICKET · PREVIEW ONLY</h2><span class="subtle">NO ORDERS WILL BE SENT</span></div>
+    <div class="ticket-grid">
+     <div class="field"><label>MARKET</label><select id="manualMarket"><option value="">Choose from live markets</option></select></div>
+     <div class="field"><label>CONTRACT TYPE</label><select id="manualContract" disabled><option>Select market first</option></select></div>
+     <div class="field"><label>TRADE DURATION (TICKS)</label><input type="number" value="5" min="1" max="100" disabled></div>
+     <div class="field"><label>STAKE (DEMO PREVIEW)</label><input type="number" value="1.00" min="0.35" step="0.01" disabled></div>
+    </div>
+    <div class="module-actions" style="margin-top:14px"><button disabled>Buy contract — disabled</button><button disabled>Sell contract — disabled</button></div>
+   </div>
+   <div class="page-note">This is a visual ticket only. Market selection will be populated from the live market list; contract purchase remains disabled until the secure demo trading stage is built and tested.</div>
+  </section>
+  <section class="page-view" id="page-charts" data-page-panel="charts">
+   <div class="page-intro"><div><h1>Charts</h1><p>Live tick chart from the selected Deriv market.</p></div><span class="module-status ready">PUBLIC DATA</span></div>
+   <div class="card"><div class="cardhead"><h2>LIVE MARKET CHART</h2><span class="subtle" id="chartMarketName">Choose a market on Dashboard</span></div><div class="chart" style="height:360px"><span class="chartlabel">LIVE TICK MOVEMENT</span><svg viewBox="0 0 700 300" preserveAspectRatio="none"><path d="M0 250 H700 M0 175 H700 M0 100 H700 M0 25 H700" stroke="#dce7eb" stroke-width="1" fill="none"/><polyline id="lineLarge" points="" fill="none" stroke="#159fbd" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/></svg></div></div>
+   <div class="page-note">This chart plots the public tick stream received by this page. It is not an order-entry chart.</div>
+  </section>
+  <section class="page-view" id="page-analysis-tool" data-page-panel="analysis-tool">
+   <div class="page-intro"><div><h1>Analysis Tool</h1><p>Basic descriptive statistics from the most recent received ticks.</p></div><span class="module-status ready">LIVE TICK ANALYSIS</span></div>
+   <div class="card"><div class="cardhead"><h2>MARKET SNAPSHOT</h2><span class="subtle" id="analysisSymbol">No market selected</span></div><div class="metric-grid"><div class="metric"><small>Latest quote</small><b id="metricLatest">—</b></div><div class="metric"><small>Average (last 60)</small><b id="metricAverage">—</b></div><div class="metric"><small>Highest (last 60)</small><b id="metricHigh">—</b></div><div class="metric"><small>Lowest (last 60)</small><b id="metricLow">—</b></div></div><div class="page-note">These are descriptive measurements only. They do not predict the next tick or generate buy/sell signals.</div></div>
+  </section>
+  <section class="page-view" id="page-tradingview" data-page-panel="tradingview">
+   <div class="page-intro"><div><h1>TradingView</h1><p>Embedded TradingView chart workspace.</p></div><span class="module-status">THIRD-PARTY CHART</span></div>
+   <div class="card"><div class="chart-frame"><iframe title="TradingView market chart" src="https://www.tradingview.com/widgetembed/?symbol=NASDAQ%3AAAPL&interval=5&theme=light&style=1&locale=en&toolbar_bg=%23f1f3f6&hide_top_toolbar=false&allow_symbol_change=true&save_image=false&calendar=false" loading="lazy" allowfullscreen></iframe></div></div>
+   <div class="page-note">TradingView is an external chart service. Its symbols and feeds may differ from Deriv synthetic indices. This embed does not connect to HedgeX Pro order execution.</div>
+  </section>
  </div>
 </main></div>
 <script>
@@ -186,12 +275,27 @@ function connect(){const m=$('market').value;if(!m){log('Choose a market first.'
 let opened=false;socket.onopen=()=>{opened=true;status('Connected — requesting '+m,'live');$('disconnect').disabled=false;log('WebSocket opened. Requesting ticks for '+m+'.');send({ticks:m,subscribe:1,req_id:22})};
 socket.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch{log('Received non-JSON data from feed.');return}if(d.error){status('Deriv rejected request','err');log('Deriv API error: '+d.error.message);return}if(d.msg_type==='tick'&&d.tick){const q=Number(d.tick.quote);if(!Number.isFinite(q))return;$('quote').textContent=q.toFixed(Number(d.tick.pip_size??2));const dec=String(d.tick.quote).split('.')[1]||'';$('lastDigit').textContent=dec?dec.slice(-1):String(Math.abs(Math.trunc(q))%10);$('tickCount').textContent=String(++count);points.push(q);if(points.length>60)points.shift();draw();if(count===1)log('First live tick received successfully.');return}if(d.msg_type)log('Deriv response: '+d.msg_type)}
 socket.onerror=()=>{status('WebSocket network error','err');$('connect').disabled=false;log('Browser could not reach the Deriv WebSocket. Check network restrictions or try another connection.')};socket.onclose=()=>{socket=null;status('Market feed disconnected');$('connect').disabled=false;$('disconnect').disabled=true;log(opened?'Feed socket closed.':'Connection closed before opening.')}}
-function draw(){if(points.length<2)return;const min=Math.min(...points),max=Math.max(...points),range=max-min||1;const pts=points.map((v,i)=>{const x=i/(Math.max(1,points.length-1))*700,y=115-(v-min)/range*95;return x.toFixed(1)+','+y.toFixed(1)}).join(' ');$('line').setAttribute('points',pts)}
+function draw(){if(points.length<2)return;const min=Math.min(...points),max=Math.max(...points),range=max-min||1;const pts=points.map((v,i)=>{const x=i/(Math.max(1,points.length-1))*700,y=115-(v-min)/range*95;return x.toFixed(1)+','+y.toFixed(1)}).join(' ');$('line').setAttribute('points',pts);const large=points.map((v,i)=>{const x=i/(Math.max(1,points.length-1))*700,y=285-(v-min)/range*255;return x.toFixed(1)+','+y.toFixed(1)}).join(' ');if($('lineLarge'))$('lineLarge').setAttribute('points',large);const avg=points.reduce((a,b)=>a+b,0)/points.length;const digits=points[points.length-1].toFixed(2);if($('metricLatest'))$('metricLatest').textContent=digits;if($('metricAverage'))$('metricAverage').textContent=avg.toFixed(2);if($('metricHigh'))$('metricHigh').textContent=max.toFixed(2);if($('metricLow'))$('metricLow').textContent=min.toFixed(2);}
 function disconnect(){if(socket){socket.close();socket=null}}
 function save(){const data={hhBarrier:Math.max(.1,Math.abs(+$('hhBarrier').value||1)),hlBarrier:Math.max(.1,Math.abs(+$('hlBarrier').value||1)),duration:Math.min(100,Math.max(1,parseInt($('duration').value)||5)),stake:Math.max(.35,+$('stake').value||1)};Object.entries(data).forEach(([k,v])=>$(k).value=v);localStorage.setItem('hedgex-config',JSON.stringify(data));log('Paper parameters saved in this browser.')}
 function load(){try{const d=JSON.parse(localStorage.getItem('hedgex-config')||'null');if(d)Object.entries(d).forEach(([k,v])=>{if($(k))$(k).value=v})}catch{}}
 function addFile(file){if(!file)return;const row=document.createElement('div');row.className='botfile';const name=document.createElement('span');name.textContent='▣  '+file.name+' · '+Math.round(file.size/1024)+' KB';const badge=document.createElement('b');badge.textContent='ADDED LOCALLY';badge.style.cssText='color:#e9bd68;font-size:9px';row.append(name,badge);$('botList').append(row);$('emptyBots').style.display='none';$('botCount').textContent=$('botList').children.length+' BOT FILE'+($('botList').children.length===1?'':'S');log('Bot file selected locally: '+file.name+'. Not executed or uploaded.')}
-$('market').onchange=e=>loadContracts(e.target.value);$('connect').onclick=connect;$('disconnect').onclick=disconnect;$('save').onclick=save;$('reset').onclick=()=>{localStorage.removeItem('hedgex-config');$('hhBarrier').value='1';$('hlBarrier').value='1';$('duration').value='5';$('stake').value='1.00';log('Parameters reset.')};$('addBot').onclick=()=>$('botFile').click();$('botFile').onchange=e=>{addFile(e.target.files[0]);e.target.value=''};$('loadBotShortcut').onclick=()=>$('botFile').click();$('analysisShortcut').onclick=()=>$('markets').scrollIntoView({behavior:'smooth'});$('searchBtn').onclick=()=>{const q=$('botSearch').value.trim().toLowerCase();[...$('botList').children].forEach(el=>el.style.display=el.textContent.toLowerCase().includes(q)?'flex':'none');if(q&&$('market').value.toLowerCase().includes(q))$('markets').scrollIntoView({behavior:'smooth'});};$('botSearch').addEventListener('keydown',e=>{if(e.key==='Enter')$('searchBtn').click()});$('clearLog').onclick=()=>{$('log').innerHTML='<div>Display reset. No trading activity was performed.</div>';};document.querySelectorAll('.summary-tabs button').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.summary-tabs button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');$('summaryBody').textContent=btn.dataset.tab==='summary'?'Your read-only market workspace is ready. No trades have been placed.':btn.dataset.tab==='transactions'?'No transactions — trade execution is disabled in Stage 1.':'Session journal: market-feed and workspace events appear in Recent Activity.'});load();
+$('market').onchange=e=>loadContracts(e.target.value);$('connect').onclick=connect;$('disconnect').onclick=disconnect;$('save').onclick=save;$('reset').onclick=()=>{localStorage.removeItem('hedgex-config');$('hhBarrier').value='1';$('hlBarrier').value='1';$('duration').value='5';$('stake').value='1.00';log('Parameters reset.')};$('addBot').onclick=()=>$('botFile').click();$('botFile').onchange=e=>{addFile(e.target.files[0]);e.target.value=''};$('loadBotShortcut').onclick=()=>$('botFile').click();$('analysisShortcut').onclick=()=>$('markets').scrollIntoView({behavior:'smooth'});$('searchBtn').onclick=()=>{const q=$('botSearch').value.trim().toLowerCase();[...$('botList').children].forEach(el=>el.style.display=el.textContent.toLowerCase().includes(q)?'flex':'none');if(q&&$('market').value.toLowerCase().includes(q))$('markets').scrollIntoView({behavior:'smooth'});};$('botSearch').addEventListener('keydown',e=>{if(e.key==='Enter')$('searchBtn').click()});$('clearLog').onclick=()=>{$('log').innerHTML='<div>Display reset. No trading activity was performed.</div>';};document.querySelectorAll('.summary-tabs button').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.summary-tabs button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');$('summaryBody').textContent=btn.dataset.tab==='summary'?'Your read-only market workspace is ready. No trades have been placed.':btn.dataset.tab==='transactions'?'No transactions — trade execution is disabled in Stage 1.':'Session journal: market-feed and workspace events appear in Recent Activity.'});
+function showPage(name){
+ document.querySelectorAll('[data-page-panel]').forEach(p=>p.classList.toggle('active',p.dataset.pagePanel===name));
+ document.querySelectorAll('.product-nav [data-page]').forEach(a=>a.classList.toggle('active',a.dataset.page===name));
+ const labels={'dashboard':'Dashboard','bot-builder':'Bot Builder','free-bots':'Free Bots','copy-trading':'Copy Trading','manual-trading':'Manual Trading','charts':'Charts','analysis-tool':'Analysis Tool','tradingview':'TradingView'};
+ const crumb=document.querySelector('.crumb b');if(crumb)crumb.textContent=labels[name]||'Dashboard';
+ if(name==='charts')$('chartMarketName').textContent=$('market').selectedOptions[0]?.textContent||'Choose a market on Dashboard';
+}
+document.querySelectorAll('.product-nav [data-page]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showPage(a.dataset.page);history.replaceState(null,'',a.getAttribute('href'));}));
+$('builderImport').onclick=()=>$('botFile').click();$('freeImport').onclick=()=>$('botFile').click();
+$('builderMyBots').onclick=()=>{showPage('dashboard');$('bots').scrollIntoView({behavior:'smooth'});};
+$('builderStrategy').onclick=()=>{showPage('dashboard');$('strategies').scrollIntoView({behavior:'smooth'});};
+$('freeBuilder').onclick=()=>showPage('bot-builder');
+$('market').addEventListener('change',()=>{const manual=$('manualMarket');manual.innerHTML='';[...$('market').options].forEach(o=>{if(o.value){const c=o.cloneNode(true);manual.append(c)}});manual.value=$('market').value;$('chartMarketName').textContent=$('market').selectedOptions[0]?.textContent||'Choose a market on Dashboard';$('analysisSymbol').textContent=$('market').selectedOptions[0]?.textContent||'No market selected';});
+
+load();
 $('market').innerHTML='<option value="">Loading Derived Indices…</option>';
 try{const ws=new WebSocket(ENDPOINT);let gotSymbols=false;const discoveryTimeout=setTimeout(()=>{if(!gotSymbols){log('Derived market list request timed out.');fallbackSymbols();try{ws.close()}catch{}}},9000);ws.onopen=()=>{log('Connected to Deriv market-data service; requesting all active symbols.');ws.send(JSON.stringify({active_symbols:'brief',req_id:1}))};ws.onmessage=e=>{try{const d=JSON.parse(e.data);if(d.error){log('Symbol discovery error: '+d.error.message);return}if(d.msg_type==='active_symbols'&&Array.isArray(d.active_symbols)){gotSymbols=true;clearTimeout(discoveryTimeout);symbolsReady(d.active_symbols);ws.close()}}catch{log('Could not read symbol-list response.')}};ws.onerror=()=>{clearTimeout(discoveryTimeout);log('Market-list WebSocket failed.');fallbackSymbols()}}catch(e){log('WebSocket unavailable in this browser: '+e.message);fallbackSymbols()}
 })();
