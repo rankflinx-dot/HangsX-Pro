@@ -17,6 +17,81 @@ main{min-width:0}.topbar{height:70px;border-bottom:1px solid var(--line);display
 .mobilebrand{display:none}
 @media(max-width:900px){.app{grid-template-columns:68px 1fr}.sidebar{padding:18px 9px;align-items:center}.brand{padding:0}.brand>div:last-child,.navlabel,.nav a span:last-child,.sidefoot{display:none}.nav{width:100%}.nav a{justify-content:center;padding:12px 5px}.nav .ico{font-size:17px}.layout{grid-template-columns:1fr}.content{padding:20px 16px}.topbar{padding:0 17px}}
 @media(max-width:560px){.app{display:block}.sidebar{display:none}.topbar{height:58px}.content{padding:17px 12px}.heading h1{font-size:20px}.heading{align-items:center}.banner{align-items:flex-start;flex-direction:column}.stats{grid-template-columns:1fr 1fr}.stats .stat:last-child{grid-column:1/-1}.configgrid{grid-template-columns:1fr}.topright .chip:first-child{display:none}}
+
+/* DollarPrinter-inspired HedgeX workspace refresh */
+:root{color-scheme:light;--bg:#f4f7f8;--side:#fff;--panel:#fff;--panel2:#f7fafb;--line:#dce5e9;--muted:#74818b;--txt:#152638;--blue:#174b87;--cyan:#19a9c9;--green:#16a58a;--red:#c92c2c;--gold:#d49a27}
+body{background:#f3f6f7;color:#152638;font-family:Inter,Arial,sans-serif}
+.app{display:block;min-height:100vh;background:#f4f6f7}
+.sidebar{display:none}
+main{width:100%}
+.account-strip{height:54px;background:#eafbf4;border-bottom:1px solid #d6eee5;display:flex;align-items:center;justify-content:space-between;padding:0 22px;color:#0c3950}
+.account-left,.account-right{display:flex;align-items:center;gap:17px;font-size:13px}
+.account-left strong{font-size:15px;font-weight:600}
+.account-currency{font-size:11px;border:1px solid #b6d4e5;background:#fff;padding:4px 7px;border-radius:3px}
+.account-status{font-weight:700;color:#229b9b}
+.account-pill{background:#7b3df0;color:#fff;border-radius:18px;padding:7px 18px;font-size:11px;font-weight:700}
+.ticker-strip{height:23px;background:#b51f25;color:#fff;display:flex;align-items:center;padding:0 12px;font-size:10px;font-weight:800;letter-spacing:.25px;overflow:hidden;white-space:nowrap}
+.ticker-strip span{margin-left:14px;font-weight:500}
+.product-nav{height:48px;background:#061a2a;color:#eaf6ff;display:flex;align-items:stretch;gap:0;padding:0 10px;overflow-x:auto;white-space:nowrap;border-bottom:5px solid #dce2e5}
+.product-nav a{display:flex;align-items:center;gap:9px;padding:0 16px;color:#e8f2fa;text-decoration:none;font-size:13px;font-weight:750;border-bottom:3px solid transparent}
+.product-nav a.active{background:#153f72;border-color:#1cb5df}
+.product-nav a:hover{background:#12304a}
+.product-nav .navico{font-size:17px;color:#24b7e3}
+.topbar{height:42px;background:#fff;border-bottom:1px solid #e3e8eb;padding:0 20px}
+.crumb{color:#71808a}.crumb b{color:#152638}
+.topright .chip{background:#f5f8fa;color:#31506b;border-color:#dce5e9}
+.topright .chip.demo{background:#e9f8f1;color:#118b68;border-color:#b8e4d2}
+.avatar{background:#d8edf5;color:#155273}
+.content{max-width:1600px;padding:20px 22px 38px}
+.heading{margin-bottom:14px;align-items:center}
+.heading h1{font-size:20px;color:#172b3d}
+.heading p{color:#7c8991}
+.banner{background:#eff9f8;border:1px solid #d6eeeb;color:#405d65;border-radius:8px;padding:11px 15px;margin-bottom:13px}
+.banner b{color:#17364b}.banner span:last-child{color:#b51f25}
+.layout{grid-template-columns:minmax(0,1fr) 335px;gap:15px;align-items:start}
+.stack{gap:13px}
+.card{background:#fff;border:1px solid #e1e7ea;border-radius:8px;padding:15px;box-shadow:0 2px 7px #18364b0a}
+.cardhead h2{color:#19334a;font-size:12px}
+.subtle{color:#84919a}
+.btn{background:#f4f7f9;color:#27455d;border:1px solid #d7e0e5;border-radius:6px}
+.btn.primary{background:#174b87;border-color:#174b87;color:#fff}
+.btn.green{background:#eaf8f2;color:#128665;border-color:#bce5d3}
+.btn.red{background:#fff0f0;color:#b4232c;border-color:#edc4c4}
+.field input,.field select,.config input{background:#fff;color:#183348;border:1px solid #d4dfe5;border-radius:6px}
+.stat{background:#f7fafb;border:1px solid #e4eaed;border-radius:7px}
+.stat small,.config label{color:#7c8991}
+.stat strong{color:#1b405b}
+.chart{background:linear-gradient(180deg,#f6fbfc,#f1f7f9);border-color:#e1eaed}
+.chartlabel{color:#71818a}
+.botempty{background:#f8fbfc;border-color:#d8e4e9}
+.boticon{background:#e4f0f7;color:#155273}
+.config{background:#f8fbfc;border-color:#e3eaed}
+.config input{background:#fff}
+.log{background:#f8fafb;color:#526777;border-color:#e2e9ec}
+.footnote{color:#87939a}
+.quick-workspace{background:#fff;border:1px solid #e1e7ea;border-radius:8px;padding:13px 15px;margin-bottom:13px}
+.quick-search{display:flex;max-width:720px;margin:0 auto 13px;border:1px solid #d7e0e5;border-radius:7px;overflow:hidden;background:#fff}
+.quick-search select{width:82px;border:0;border-right:1px solid #d7e0e5;padding:10px;background:#f7f9fa;color:#28445a}
+.quick-search input{flex:1;min-width:0;border:0;padding:10px 13px;outline:none;color:#183348}
+.quick-actions{display:flex;justify-content:center;gap:9px;flex-wrap:wrap}
+.quick-actions button{min-width:125px;background:#fff;border:1px solid #dce5e9;border-radius:7px;padding:11px 13px;color:#19364d;font-weight:750;font-size:12px}
+.quick-actions button span{display:inline-grid;place-items:center;width:28px;height:28px;margin-right:7px;border-radius:7px;background:#e8f2f7;color:#126083}
+.quick-actions button:disabled{opacity:.55;cursor:not-allowed}
+.summary-card{padding:0;overflow:hidden}
+.summary-actions{display:flex;gap:8px;align-items:center;padding:12px;background:#fff;border-bottom:1px solid #e5eaed}
+.summary-actions .btn{flex:1}
+.summary-tabs{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid #e2e8eb}
+.summary-tabs button{padding:12px 5px;border:0;background:#fff;color:#657580;font-size:12px;font-weight:650}
+.summary-tabs button.active{background:#174b87;color:#fff}
+.summary-empty{min-height:165px;display:grid;place-items:center;text-align:center;padding:25px;color:#697780;font-size:12px;line-height:1.6}
+.summary-grid{background:#f4f6f7;padding:17px 14px;display:grid;grid-template-columns:repeat(3,1fr);gap:15px 8px;text-align:center}
+.summary-grid small{display:block;color:#65737c;font-size:10px;font-weight:650}
+.summary-grid b{display:block;color:#304b5c;font-size:12px;font-weight:500;margin-top:4px}
+.summary-reset{padding:10px 14px;background:#f4f6f7}
+.summary-reset button{width:100%;background:#fff;border:1px solid #cfd9df;border-radius:5px;padding:8px;font-weight:700;color:#263f52}
+@media(max-width:950px){.layout{grid-template-columns:1fr}.summary-card{order:-1}.product-nav a{padding:0 12px}}
+@media(max-width:560px){.account-strip{padding:0 10px}.account-left,.account-right{gap:8px}.account-left strong{font-size:12px}.account-pill{padding:6px 10px}.product-nav{height:44px}.product-nav a{font-size:11px;padding:0 10px}.topbar{padding:0 10px}.content{padding:12px 9px}.quick-search{max-width:none}.summary-grid{grid-template-columns:repeat(2,1fr)}}
+
 </style></head>
 <body><div class="app">
 <aside class="sidebar">
@@ -34,12 +109,16 @@ main{min-width:0}.topbar{height:70px;border-bottom:1px solid var(--line);display
  <div class="sidefoot"><b>● Demo / paper mode</b>Trading is disabled in this build. Your bot files are not uploaded to a server.</div>
 </aside>
 <main>
+ <div class="account-strip"><div class="account-left"><span class="account-currency">KES</span><span>☎</span><strong>HedgeX Pro Workspace</strong></div><div class="account-right"><span class="account-status">● DEMO WORKSPACE</span><span class="account-pill">Account settings</span><span>⌄</span></div></div>
+ <div class="ticker-strip">HEDGEX PRO MARKET DESK <span>WELCOME — DERIV INDICES, LIVE MARKET DATA AND YOUR OWN BOT WORKSPACE · READ-ONLY DEMO MODE</span></div>
+ <nav class="product-nav"><a class="active" href="#overview"><span class="navico">⌂</span>Dashboard</a><a href="#bots"><span class="navico">⚙</span>Bot Builder</a><a href="#bots"><span class="navico">▣</span>Trading Bots</a><a href="#markets"><span class="navico">⌁</span>Bulk Trader</a><a href="#strategies"><span class="navico">♧</span>Pro AI</a><a href="#strategies"><span class="navico">⟳</span>Dual Edge</a><a href="#markets"><span class="navico">⌕</span>Analysis Tool</a><a href="#markets"><span class="navico">▥</span>Charts</a></nav>
  <header class="topbar"><div class="crumb">HedgeX Pro <span style="color:#536680"> / </span><b>Overview</b></div><div class="topright"><span class="chip demo">DEMO MODE</span><span class="chip">STAGE 1 · READ ONLY</span><div class="avatar">H</div></div></header>
  <div class="content" id="overview">
   <div class="heading"><div><h1>Trading workspace</h1><p>Monitor Deriv Volatility Indices and manage your own strategy files.</p></div><div class="status"><i class="dot" id="dot"></i><span id="status">Market feed disconnected</span></div></div>
   <div class="banner"><div><b>Welcome to HedgeX Pro.</b> Your workspace is ready for your own bots. Connect to public market data to monitor live prices.</div><span>● NO LIVE TRADING</span></div>
   <div class="layout">
    <div class="stack">
+    <section class="quick-workspace"><div class="quick-search"><select aria-label="Bot filter"><option>All</option><option>My bots</option><option>Imported</option></select><input id="botSearch" type="search" placeholder="Search for a bot or market..."><button class="btn" id="searchBtn" aria-label="Search">⌕</button></div><div class="quick-actions"><button id="loadBotShortcut"><span>▣</span>Load Bot</button><button id="premiumShortcut" disabled><span>♟</span>Premium Bots</button><button id="freeShortcut" disabled><span>♟</span>Free Bots</button><button id="analysisShortcut"><span>▦</span>Analysis Tool</button></div></section>
     <section class="card" id="markets">
      <div class="cardhead"><h2>LIVE MARKET MONITOR</h2><span class="subtle">DERIV · PUBLIC MARKET DATA</span></div>
      <div class="marketbar"><div class="field"><label>DERIVED INDEX</label><select id="market"><option value="">Loading available symbols…</option></select></div><div class="field"><label>AVAILABLE CONTRACT TYPE</label><select id="contractType" disabled><option value="">Select a market first</option></select></div><button class="btn primary" id="connect">Connect feed</button><button class="btn" id="disconnect" disabled>Disconnect</button></div>
@@ -55,6 +134,7 @@ main{min-width:0}.topbar{height:70px;border-bottom:1px solid var(--line);display
     <section class="card" id="activity"><div class="cardhead"><h2>RECENT ACTIVITY</h2><span class="subtle">LOCAL SESSION</span></div><div class="log" id="log"><div>HedgeX Pro workspace initialized. Trading is disabled.</div></div></section>
    </div>
    <div class="stack">
+    <section class="card summary-card"><div class="summary-actions"><button class="btn primary" disabled title="Trading is disabled in Stage 1">▶ Run</button><span class="subtle">Execution<br><b>DISABLED</b></span><button class="btn" disabled>Announcements</button></div><div class="summary-tabs"><button class="active" data-tab="summary">Summary</button><button data-tab="transactions">Transactions</button><button data-tab="journal">Journal</button></div><div class="summary-empty" id="summaryBody">When you're ready to test, your read-only workspace will show market-feed activity here. Trade execution is disabled.</div><div class="summary-grid"><div><small>Total stake</small><b>0.00 KES</b></div><div><small>Total payout</small><b>0.00 KES</b></div><div><small>No. of runs</small><b>0</b></div><div><small>Contracts lost</small><b>0</b></div><div><small>Contracts won</small><b>0</b></div><div><small>Total profit/loss</small><b>0.00 KES</b></div></div><div class="summary-reset"><button id="clearLog">Reset display</button></div></section>
     <section class="card" id="strategies">
      <div class="cardhead"><h2>STRATEGY PARAMETERS</h2><span class="subtle">PAPER SETTINGS</span></div>
      <div class="configgrid">
@@ -111,7 +191,7 @@ function disconnect(){if(socket){socket.close();socket=null}}
 function save(){const data={hhBarrier:Math.max(.1,Math.abs(+$('hhBarrier').value||1)),hlBarrier:Math.max(.1,Math.abs(+$('hlBarrier').value||1)),duration:Math.min(100,Math.max(1,parseInt($('duration').value)||5)),stake:Math.max(.35,+$('stake').value||1)};Object.entries(data).forEach(([k,v])=>$(k).value=v);localStorage.setItem('hedgex-config',JSON.stringify(data));log('Paper parameters saved in this browser.')}
 function load(){try{const d=JSON.parse(localStorage.getItem('hedgex-config')||'null');if(d)Object.entries(d).forEach(([k,v])=>{if($(k))$(k).value=v})}catch{}}
 function addFile(file){if(!file)return;const row=document.createElement('div');row.className='botfile';const name=document.createElement('span');name.textContent='▣  '+file.name+' · '+Math.round(file.size/1024)+' KB';const badge=document.createElement('b');badge.textContent='ADDED LOCALLY';badge.style.cssText='color:#e9bd68;font-size:9px';row.append(name,badge);$('botList').append(row);$('emptyBots').style.display='none';$('botCount').textContent=$('botList').children.length+' BOT FILE'+($('botList').children.length===1?'':'S');log('Bot file selected locally: '+file.name+'. Not executed or uploaded.')}
-$('market').onchange=e=>loadContracts(e.target.value);$('connect').onclick=connect;$('disconnect').onclick=disconnect;$('save').onclick=save;$('reset').onclick=()=>{localStorage.removeItem('hedgex-config');$('hhBarrier').value='1';$('hlBarrier').value='1';$('duration').value='5';$('stake').value='1.00';log('Parameters reset.')};$('addBot').onclick=()=>$('botFile').click();$('botFile').onchange=e=>{addFile(e.target.files[0]);e.target.value=''};load();
+$('market').onchange=e=>loadContracts(e.target.value);$('connect').onclick=connect;$('disconnect').onclick=disconnect;$('save').onclick=save;$('reset').onclick=()=>{localStorage.removeItem('hedgex-config');$('hhBarrier').value='1';$('hlBarrier').value='1';$('duration').value='5';$('stake').value='1.00';log('Parameters reset.')};$('addBot').onclick=()=>$('botFile').click();$('botFile').onchange=e=>{addFile(e.target.files[0]);e.target.value=''};$('loadBotShortcut').onclick=()=>$('botFile').click();$('analysisShortcut').onclick=()=>$('markets').scrollIntoView({behavior:'smooth'});$('searchBtn').onclick=()=>{const q=$('botSearch').value.trim().toLowerCase();[...$('botList').children].forEach(el=>el.style.display=el.textContent.toLowerCase().includes(q)?'flex':'none');if(q&&$('market').value.toLowerCase().includes(q))$('markets').scrollIntoView({behavior:'smooth'});};$('botSearch').addEventListener('keydown',e=>{if(e.key==='Enter')$('searchBtn').click()});$('clearLog').onclick=()=>{$('log').innerHTML='<div>Display reset. No trading activity was performed.</div>';};document.querySelectorAll('.summary-tabs button').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.summary-tabs button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');$('summaryBody').textContent=btn.dataset.tab==='summary'?'Your read-only market workspace is ready. No trades have been placed.':btn.dataset.tab==='transactions'?'No transactions — trade execution is disabled in Stage 1.':'Session journal: market-feed and workspace events appear in Recent Activity.'});load();
 $('market').innerHTML='<option value="">Loading Derived Indices…</option>';
 try{const ws=new WebSocket(ENDPOINT);let gotSymbols=false;const discoveryTimeout=setTimeout(()=>{if(!gotSymbols){log('Derived market list request timed out.');fallbackSymbols();try{ws.close()}catch{}}},9000);ws.onopen=()=>{log('Connected to Deriv market-data service; requesting all active symbols.');ws.send(JSON.stringify({active_symbols:'brief',req_id:1}))};ws.onmessage=e=>{try{const d=JSON.parse(e.data);if(d.error){log('Symbol discovery error: '+d.error.message);return}if(d.msg_type==='active_symbols'&&Array.isArray(d.active_symbols)){gotSymbols=true;clearTimeout(discoveryTimeout);symbolsReady(d.active_symbols);ws.close()}}catch{log('Could not read symbol-list response.')}};ws.onerror=()=>{clearTimeout(discoveryTimeout);log('Market-list WebSocket failed.');fallbackSymbols()}}catch(e){log('WebSocket unavailable in this browser: '+e.message);fallbackSymbols()}
 })();
