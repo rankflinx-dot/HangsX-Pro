@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090f1d">
+<title>HedgeX Pro | Stage 1</title>
+<style>
+:root{color-scheme:dark;--bg:#090f1d;--panel:#111b2d;--panel2:#0d1728;--line:#24334b;--muted:#91a2bb;--text:#edf3ff;--cyan:#52d6e8;--green:#43d69a;--red:#ff7185;--amber:#f6c66a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0%,#152847 0,transparent 35%),var(--bg);color:var(--text);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}
+.wrap{max-width:1180px;margin:auto;padding:28px 18px 50px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}.brand{display:flex;align-items:center;gap:12px}.mark{width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,#48d8e8,#3976d8);display:grid;place-items:center;color:#071321;font-weight:900;font-size:21px}.brand h1{font-size:22px;margin:0;letter-spacing:.3px}.sub{color:var(--muted);font-size:12px}.pills{display:flex;gap:8px;flex-wrap:wrap}.pill{border:1px solid var(--line);border-radius:99px;padding:6px 11px;font-size:11px;font-weight:800;letter-spacing:.6px}.demo{color:var(--green);border-color:#286b55;background:#102b29}.readonly{color:var(--cyan);border-color:#286078;background:#102531}
+.notice{border:1px solid #67512c;background:#292316;color:#f5d99d;padding:12px 15px;border-radius:12px;margin-bottom:18px;font-size:13px}
+.grid{display:grid;grid-template-columns:1.4fr 1fr;gap:16px}.panel{background:linear-gradient(180deg,#131f33,#0f192a);border:1px solid var(--line);border-radius:16px;padding:18px;min-width:0}.panel h2{font-size:14px;margin:0 0 15px;letter-spacing:.5px}.muted{color:var(--muted)}.statusline{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--muted)}.dot{width:8px;height:8px;border-radius:50%;background:#68758b}.dot.on{background:var(--green);box-shadow:0 0 12px #43d69a88}.dot.bad{background:var(--red)}
+.controls{display:flex;gap:9px;flex-wrap:wrap;align-items:end;margin-top:18px}label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}select,input{background:#091322;color:var(--text);border:1px solid #30425d;border-radius:9px;padding:10px 11px;min-height:41px;font:inherit;max-width:100%}.field{min-width:125px;flex:1}button{border:0;border-radius:9px;padding:11px 16px;font-weight:800;cursor:pointer;min-height:41px}.primary{background:var(--cyan);color:#061521}.secondary{background:#22324b;color:var(--text);border:1px solid #354965}.danger{background:#38202b;color:#ffb4bf;border:1px solid #713b4b}button:disabled{opacity:.45;cursor:not-allowed}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:17px}.metric{background:#0a1424;border:1px solid #1f3048;border-radius:12px;padding:13px}.metric .k{font-size:11px;color:var(--muted)}.metric .v{font-size:21px;font-weight:800;margin-top:5px;overflow-wrap:anywhere}.price{color:var(--cyan)}.digit{color:var(--amber)}
+.configs{display:grid;grid-template-columns:1fr 1fr;gap:12px}.strategy{background:#0a1424;border:1px solid #22334d;border-radius:12px;padding:14px}.strategy h3{font-size:13px;margin:0 0 10px}.tag{font-size:10px;font-weight:900;letter-spacing:.7px;padding:3px 7px;border-radius:6px;margin-left:6px}.hh{background:#153a31;color:#72e5b6}.hl{background:#3b202b;color:#ff9cac}.strategy input{width:100%}.strategy p{font-size:11px;color:var(--muted);margin:9px 0 0}
+.full{grid-column:1/-1}.log{height:145px;overflow:auto;background:#08111f;border:1px solid #1e2c41;border-radius:10px;padding:10px;font:12px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;color:#a9bdd7}.log div{border-bottom:1px solid #152238;padding:2px 0}.footer{margin-top:18px;text-align:center;color:#71829a;font-size:11px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.metrics{grid-template-columns:1fr 1fr}.metrics .metric:last-child{grid-column:1/-1}.configs{grid-template-columns:1fr}.wrap{padding:18px 12px 35px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+ <div class="brand"><div class="mark">H</div><div><h1>HedgeX Pro</h1><div class="sub">Volatility Indices • paired-strategy research dashboard</div></div></div>
+ <div class="pills"><span class="pill demo">DEMO ENVIRONMENT</span><span class="pill readonly">STAGE 1 · READ ONLY</span></div>
+</header>
+<div class="notice"><strong>Safety lock:</strong> This build only reads public market ticks and saves paper settings in this browser. It has no account login, balance access, order placement, or real-money trading.</div>
+<div class="grid">
+ <section class="panel">
+  <h2>LIVE MARKET MONITOR</h2>
+  <div class="statusline"><span id="dot" class="dot"></span><span id="status">Disconnected — select a market and connect</span></div>
+  <div class="controls">
+   <div class="field"><label for="market">Volatility market</label><select id="market"><option value="">Loading symbols…</option></select></div>
+   <button id="connect" class="primary">Connect feed</button>
+   <button id="disconnect" class="secondary" disabled>Disconnect</button>
+  </div>
+  <div class="metrics">
+   <div class="metric"><div class="k">LATEST QUOTE</div><div class="v price" id="quote">—</div></div>
+   <div class="metric"><div class="k">LAST DIGIT</div><div class="v digit" id="lastDigit">—</div></div>
+   <div class="metric"><div class="k">TICKS RECEIVED</div><div class="v" id="tickCount">0</div></div>
+  </div>
+  <p class="muted" style="font-size:11px;margin:13px 0 0">The available markets are loaded from Deriv's active-symbols response. A market must be listed there before it can be selected.</p>
+ </section>
+ <section class="panel">
+  <h2>PAIR CONFIGURATION · PAPER ONLY</h2>
+  <div class="configs">
+   <div class="strategy"><h3>HH <span class="tag hh">HIGHER</span></h3><label for="hhBarrier">Positive barrier offset</label><input id="hhBarrier" type="number" step="0.1" min="0.1" value="1.0"><p>Paper setting only. No proposal or contract is sent.</p></div>
+   <div class="strategy"><h3>HL <span class="tag hl">LOWER</span></h3><label for="hlBarrier">Negative barrier offset</label><input id="hlBarrier" type="number" step="0.1" min="0.1" value="1.0"><p>Stored as a negative offset for later testing.</p></div>
+  </div>
+  <div class="controls">
+   <div class="field"><label for="duration">Duration (ticks)</label><input id="duration" type="number" min="1" max="100" value="5"></div>
+   <div class="field"><label for="stake">Paper stake (display only)</label><input id="stake" type="number" min="0.35" step="0.01" value="1.00"></div>
+  </div>
+  <div class="controls"><button class="primary" id="save">Save settings</button><button class="secondary" id="reset">Reset settings</button></div>
+  <p class="muted" style="font-size:11px;margin-bottom:0">HH and HL are separate hypothetical legs. This page does not combine them into one atomic trade.</p>
+ </section>
+ <section class="panel full">
+  <h2>ACTIVITY LOG</h2><div class="log" id="log" aria-live="polite"><div>HedgeX Pro loaded. Trading functions are disabled.</div></div>
+ </section>
+</div>
+<div class="footer">HedgeX Pro · Stage 1 prototype · Market data supplied by Deriv public API</div>
+</div>
+<script>
+(() => {
+ 'use strict';
+ const ENDPOINT = 'wss://api.derivws.com/trading/v1/options/ws/public';
+ const allowed = ['R_10','R_25','R_50','R_75','R_100'];
+ const $ = id => document.getElementById(id);
+ let socket = null, tickCount = 0, activeSub = null, symbols = [];
+ function log(message){const row=document.createElement('div');row.textContent=new Date().toLocaleTimeString()+'  '+message;$('log').prepend(row);}
+ function setStatus(message,state=''){ $('status').textContent=message;$('dot').className='dot'+(state?' '+state:'');}
+ function send(payload){if(!socket||socket.readyState!==WebSocket.OPEN){log('Not connected.');return false;}socket.send(JSON.stringify(payload));return true;}
+ function loadSaved(){try{const s=JSON.parse(localStorage.getItem('hedgex-stage1')||'null');if(s){$('hhBarrier').value=s.hhBarrier;$('hlBarrier').value=s.hlBarrier;$('duration').value=s.duration;$('stake').value=s.stake;}}catch(e){log('Could not read saved settings.');}}
+ function save(){const data={hhBarrier:Math.max(.1,Math.abs(Number($('hhBarrier').value)||1)),hlBarrier:Math.max(.1,Math.abs(Number($('hlBarrier').value)||1)),duration:Math.min(100,Math.max(1,parseInt($('duration').value,10)||5)),stake:Math.max(.35,Number($('stake').value)||1)};Object.entries(data).forEach(([k,v])=>$(k).value=v);try{localStorage.setItem('hedgex-stage1',JSON.stringify(data));log('Paper settings saved in this browser.');}catch(e){log('Browser storage unavailable; settings not saved.');}}
+ function populate(list){symbols=list||[];const select=$('market');select.innerHTML='';const found=allowed.map(code=>symbols.find(s=>s.symbol===code)).filter(Boolean);const choices=found.length?found:symbols.filter(s=>/volatility/i.test(s.display_name||'')).slice(0,30);if(!choices.length){select.innerHTML='<option value="">No matching volatility symbols returned</option>';log('No requested Volatility Index symbols were returned by active_symbols.');return;}choices.forEach(s=>{const o=document.createElement('option');o.value=s.symbol;o.textContent=(s.display_name||s.symbol)+' ('+s.symbol+')';select.appendChild(o);});if(found.length){select.value=found[0].symbol;}log('Loaded '+choices.length+' available volatility market(s).');}
+ function connect(){if(socket&&socket.readyState===WebSocket.OPEN){log('Feed is already connected.');return;}const market=$('market').value;if(!market){log('Choose an available market first.');return;}setStatus('Connecting to Deriv public feed…');$('connect').disabled=true;try{socket=new WebSocket(ENDPOINT);}catch(e){setStatus('Could not create WebSocket','bad');$('connect').disabled=false;log('WebSocket error: '+e.message);return;}
+ socket.onopen=()=>{setStatus('Connected — requesting market data','on');$('disconnect').disabled=false;log('Connected to public market-data endpoint.');send({ticks:market,subscribe:1,req_id:2});};
+ socket.onmessage=event=>{let data;try{data=JSON.parse(event.data);}catch(e){log('Received an unreadable response.');return;}if(data.error){log('Deriv error: '+data.error.message);setStatus('API error: '+data.error.message,'bad');return;}if(data.msg_type==='active_symbols'&&Array.isArray(data.active_symbols)){populate(data.active_symbols);return;}if(data.msg_type==='tick'&&data.tick){const q=Number(data.tick.quote);if(Number.isFinite(q)){$('quote').textContent=q.toFixed(data.tick.pip_size??2);const decimals=String(data.tick.quote).split('.')[1]||'';$('lastDigit').textContent=decimals.length?decimals.slice(-1):String(Math.abs(Math.trunc(q))%10);$('tickCount').textContent=String(++tickCount);}}
+ };
+ socket.onerror=()=>{setStatus('Connection error — check network and retry','bad');log('WebSocket connection error.');};
+ socket.onclose=()=>{setStatus('Disconnected');$('connect').disabled=false;$('disconnect').disabled=true;socket=null;activeSub=null;log('Market feed disconnected.');};
+ }
+ function disconnect(){if(socket){try{if(activeSub)send({forget:activeSub});socket.close();}catch(e){log('Disconnect issue: '+e.message);}}}
+ $('connect').addEventListener('click',connect);$('disconnect').addEventListener('click',disconnect);$('save').addEventListener('click',save);$('reset').addEventListener('click',()=>{localStorage.removeItem('hedgex-stage1');$('hhBarrier').value='1.0';$('hlBarrier').value='1.0';$('duration').value='5';$('stake').value='1.00';log('Paper settings reset.');});
+ loadSaved();
+ // Discover the current symbol codes from Deriv before the user connects to a specific market.
+ try{const discovery=new WebSocket(ENDPOINT);discovery.onopen=()=>discovery.send(JSON.stringify({active_symbols:'brief',req_id:1}));discovery.onmessage=e=>{try{const d=JSON.parse(e.data);if(d.msg_type==='active_symbols'&&Array.isArray(d.active_symbols)){populate(d.active_symbols);discovery.close();}}catch(err){}};discovery.onerror=()=>{log('Could not load symbols automatically. Try refreshing the page.');};}catch(e){log('Browser does not support WebSocket.');}
+})();
+</script>
+</body>
+</html>
