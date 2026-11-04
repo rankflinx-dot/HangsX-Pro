@@ -122,6 +122,29 @@ main{width:100%}
 @media(max-width:700px){.module-grid,.ticket-grid{grid-template-columns:1fr}.metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.chart-frame{height:390px}.page-intro{align-items:flex-start;flex-direction:column}}
 .connection-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.connection-option{border:1px solid #e0e8ec;background:#f8fbfc;border-radius:8px;padding:14px}.connection-option h3{margin:0 0 6px;color:#183b55;font-size:13px}.connection-option p{margin:0 0 12px;color:#75838c;font-size:11px;line-height:1.6}.connection-option .field{margin-bottom:9px}.connection-status{margin-top:10px;min-height:18px;color:#657580;font-size:11px}.connection-security{margin-top:12px}.connection-security ul{margin:5px 0 0;padding-left:18px}.connection-security li{margin:3px 0}@media(max-width:700px){.connection-grid{grid-template-columns:1fr}}
 
+
+/* In-site paper bot workspace */
+.paper-panel{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(260px,.9fr);gap:14px;margin-top:14px}
+.paper-form{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.paper-form .field{min-width:0}
+.paper-form .wide{grid-column:1/-1}
+.paper-form input,.paper-form select{width:100%;padding:10px;border:1px solid #d4dfe5;border-radius:6px;background:#fff;color:#183348}
+.paper-controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.paper-state{border:1px solid #dce7eb;background:#f7fafb;border-radius:8px;padding:13px}
+.paper-state strong{display:block;font-size:14px;color:#183b55;margin-bottom:4px}
+.paper-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.paper-stat{background:#fff;border:1px solid #e1e8eb;border-radius:7px;padding:9px}
+.paper-stat small{display:block;color:#788790;font-size:10px}
+.paper-stat b{display:block;color:#174b70;font-size:15px;margin-top:3px}
+.paper-bot-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px;border:1px solid #e0e8ec;background:#fff;border-radius:7px;margin-top:8px}
+.paper-bot-row strong{display:block;color:#183b55;font-size:12px}
+.paper-bot-row small{display:block;color:#7b8992;font-size:10px}
+.paper-events{max-height:220px;overflow:auto;font:11px/1.6 ui-monospace,monospace;color:#526777;background:#f8fafb;border:1px solid #e2e9ec;border-radius:7px;padding:9px}
+.backend-status{display:flex;align-items:center;gap:8px;font-size:11px;color:#687984}
+.backend-status i{width:7px;height:7px;border-radius:50%;background:#d49a27}
+.backend-status.online i{background:#16a58a}
+@media(max-width:760px){.paper-panel{grid-template-columns:1fr}.paper-form{grid-template-columns:1fr}.paper-form .wide{grid-column:auto}}
+
 </style></head>
 <body><div class="app">
 <aside class="sidebar">
@@ -199,12 +222,39 @@ main{width:100%}
   <div class="footnote">HedgeX Pro is an independent dashboard prototype and is not affiliated with DollarPrinter or Deriv. Use a Deriv demo account for any future testing.</div>
   </section>
   <section class="page-view" id="page-bot-builder" data-page-panel="bot-builder">
-   <div class="page-intro"><div><h1>Bot Builder</h1><p>Bring your own bot files into your HedgeX Pro workspace.</p></div><span class="module-status ready">LOCAL FILE WORKSPACE</span></div>
+   <div class="page-intro"><div><h1>Bot Builder</h1><p>Create and manage in-site strategies. This release runs signal-only paper monitoring against public market ticks.</p></div><span class="module-status ready">PAPER MONITOR · NO ORDERS</span></div>
    <div class="module-grid">
-    <div class="module-tile"><h3>Import your bot</h3><p>Load your own DBot XML, JSON, JavaScript or text-based strategy file. Files remain in this browser and are not executed.</p><div class="module-actions"><button id="builderImport">＋ Import bot file</button><button id="builderMyBots">View bot library</button></div></div>
-    <div class="module-tile"><h3>Strategy configuration</h3><p>Set up your own HH Higher and HL Lower paper parameters. The two legs are separate contracts, not one guaranteed atomic trade.</p><div class="module-actions"><button id="builderStrategy">Open paper settings</button></div></div>
+    <div class="module-tile"><h3>Build a strategy</h3><p>Create a named signal monitor with a market, observation window and minimum price movement. No imported code is executed.</p><div class="module-actions"><button id="builderImport">＋ Import bot file</button><button id="builderMyBots">View imported files</button></div></div>
+    <div class="module-tile"><h3>Runtime connection</h3><p>Paper monitoring uses the public Deriv market-data feed already available in your dashboard. Keep the market feed connected while a monitor is running.</p><div class="backend-status" id="backendStatus"><i></i><span>Checking platform API configuration…</span></div></div>
    </div>
-   <div class="page-note">Bot execution is not available yet. This builder currently stores and lists selected files only; it does not run imported code.</div>
+   <div class="paper-panel">
+    <div class="module-tile">
+     <h3>Strategy configuration</h3>
+     <div class="paper-form">
+      <div class="field wide"><label for="paperBotName">BOT NAME</label><input id="paperBotName" maxlength="48" value="My first signal bot" placeholder="Give your bot a name"></div>
+      <div class="field"><label for="paperMarket">DERIV MARKET</label><select id="paperMarket"><option value="">Load markets on Dashboard first</option></select></div>
+      <div class="field"><label for="paperWindow">OBSERVATION WINDOW (TICKS)</label><input id="paperWindow" type="number" min="2" max="60" value="5"></div>
+      <div class="field"><label for="paperThreshold">MINIMUM MOVE (PRICE UNITS)</label><input id="paperThreshold" type="number" min="0.000001" step="any" value="0.5"></div>
+      <div class="field"><label for="paperMaxSignals">MAX SIGNALS PER SESSION</label><input id="paperMaxSignals" type="number" min="1" max="100" value="10"></div>
+     </div>
+     <div class="paper-controls"><button class="btn primary" id="savePaperBot">Save strategy</button><button class="btn green" id="startPaperBot">▶ Start paper monitor</button><button class="btn" id="pausePaperBot" disabled>Pause</button><button class="btn red" id="stopPaperBot" disabled>Stop</button></div>
+     <p class="confignote">This creates directional signals only. It does not open contracts, estimate payouts, calculate profit, or send orders. A signal is not a prediction.</p>
+    </div>
+    <div class="module-tile">
+     <h3>Paper monitor status</h3>
+     <div class="paper-state"><strong id="paperRuntimeState">STOPPED</strong><span class="subtle" id="paperRuntimeMessage">Save a strategy, connect the public market feed and start monitoring.</span>
+      <div class="paper-stats">
+       <div class="paper-stat"><small>Signals this session</small><b id="paperSignalCount">0</b></div>
+       <div class="paper-stat"><small>Ticks observed</small><b id="paperTickCount">0</b></div>
+       <div class="paper-stat"><small>Selected market</small><b id="paperCurrentMarket">—</b></div>
+       <div class="paper-stat"><small>Last signal</small><b id="paperLastSignal">—</b></div>
+      </div>
+     </div>
+     <h3 style="margin-top:14px">Signal journal</h3><div class="paper-events" id="paperEvents" aria-live="polite">No paper signals recorded.</div>
+    </div>
+   </div>
+   <div class="module-tile" style="margin-top:14px"><h3>Saved strategies</h3><p>Configurations are stored in this browser only. They are not synced to an account or uploaded to the server.</p><div id="paperBotLibrary"><span class="subtle">No saved strategies yet.</span></div></div>
+   <div class="page-note">Imported XML, JSON, JavaScript and text files remain separate from this native strategy builder. Imported files are listed locally only and are never executed by HedgeX Pro.</div>
   </section>
   <section class="page-view" id="page-free-bots" data-page-panel="free-bots">
    <div class="page-intro"><div><h1>Free Bots</h1><p>A library area for free strategies you choose to add.</p></div><span class="module-status">LIBRARY NOT CONNECTED</span></div>
@@ -268,7 +318,7 @@ function symbolsReady(arr){
  if(!derived.length){fallbackSymbols();log('Deriv returned symbols, but no Derived Indices matched the filter.');return}
  const groups={};derived.forEach(x=>{const group=x.submarket||x.subgroup||'Derived Indices';(groups[group]??=[]).push(x)});
  Object.keys(groups).sort().forEach(group=>{const og=document.createElement('optgroup');og.label=group.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());groups[group].sort((a,b)=>symbolName(a).localeCompare(symbolName(b))).forEach(x=>{const code=symbolCode(x);if(!code)return;const o=document.createElement('option');o.value=code;o.textContent=symbolName(x)+' · '+code;og.append(o)});sel.append(og)});
- log('Loaded '+derived.length+' Derived Indices from Deriv ('+symbols.length+' total active symbols).');if(sel.value)loadContracts(sel.value);
+ log('Loaded '+derived.length+' Derived Indices from Deriv ('+symbols.length+' total active symbols).');syncPaperMarkets();if(sel.value)loadContracts(sel.value);
 }
 function loadContracts(m){
  if(!m)return;if(contractSocket){try{contractSocket.close()}catch{}}
@@ -282,13 +332,76 @@ function loadContracts(m){
 }
 function connect(){const m=$('market').value;if(!m){log('Choose a market first.');return}if(socket&&socket.readyState===1)return;status('Connecting to Deriv…');$('connect').disabled=true;try{socket=new WebSocket(ENDPOINT)}catch(e){status('Browser could not create WebSocket','err');$('connect').disabled=false;log('WebSocket setup failed: '+e.message);return}
 let opened=false;socket.onopen=()=>{opened=true;status('Connected — requesting '+m,'live');$('disconnect').disabled=false;log('WebSocket opened. Requesting ticks for '+m+'.');send({ticks:m,subscribe:1,req_id:22})};
-socket.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch{log('Received non-JSON data from feed.');return}if(d.error){status('Deriv rejected request','err');log('Deriv API error: '+d.error.message);return}if(d.msg_type==='tick'&&d.tick){const q=Number(d.tick.quote);if(!Number.isFinite(q))return;$('quote').textContent=q.toFixed(Number(d.tick.pip_size??2));const dec=String(d.tick.quote).split('.')[1]||'';$('lastDigit').textContent=dec?dec.slice(-1):String(Math.abs(Math.trunc(q))%10);$('tickCount').textContent=String(++count);points.push(q);if(points.length>60)points.shift();draw();if(count===1)log('First live tick received successfully.');return}if(d.msg_type)log('Deriv response: '+d.msg_type)}
+socket.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch{log('Received non-JSON data from feed.');return}if(d.error){status('Deriv rejected request','err');log('Deriv API error: '+d.error.message);return}if(d.msg_type==='tick'&&d.tick){const q=Number(d.tick.quote);if(!Number.isFinite(q))return;$('quote').textContent=q.toFixed(Number(d.tick.pip_size??2));const dec=String(d.tick.quote).split('.')[1]||'';$('lastDigit').textContent=dec?dec.slice(-1):String(Math.abs(Math.trunc(q))%10);$('tickCount').textContent=String(++count);points.push(q);if(points.length>60)points.shift();draw();processPaperTick(q);if(count===1)log('First live tick received successfully.');return}if(d.msg_type)log('Deriv response: '+d.msg_type)}
 socket.onerror=()=>{status('WebSocket network error','err');$('connect').disabled=false;log('Browser could not reach the Deriv WebSocket. Check network restrictions or try another connection.')};socket.onclose=()=>{socket=null;status('Market feed disconnected');$('connect').disabled=false;$('disconnect').disabled=true;log(opened?'Feed socket closed.':'Connection closed before opening.')}}
 function draw(){if(points.length<2)return;const min=Math.min(...points),max=Math.max(...points),range=max-min||1;const pts=points.map((v,i)=>{const x=i/(Math.max(1,points.length-1))*700,y=115-(v-min)/range*95;return x.toFixed(1)+','+y.toFixed(1)}).join(' ');$('line').setAttribute('points',pts);const large=points.map((v,i)=>{const x=i/(Math.max(1,points.length-1))*700,y=285-(v-min)/range*255;return x.toFixed(1)+','+y.toFixed(1)}).join(' ');if($('lineLarge'))$('lineLarge').setAttribute('points',large);const avg=points.reduce((a,b)=>a+b,0)/points.length;const digits=points[points.length-1].toFixed(2);if($('metricLatest'))$('metricLatest').textContent=digits;if($('metricAverage'))$('metricAverage').textContent=avg.toFixed(2);if($('metricHigh'))$('metricHigh').textContent=max.toFixed(2);if($('metricLow'))$('metricLow').textContent=min.toFixed(2);}
 function disconnect(){if(socket){socket.close();socket=null}}
 function save(){const data={hhBarrier:Math.max(.1,Math.abs(+$('hhBarrier').value||1)),hlBarrier:Math.max(.1,Math.abs(+$('hlBarrier').value||1)),duration:Math.min(100,Math.max(1,parseInt($('duration').value)||5)),stake:Math.max(.35,+$('stake').value||1)};Object.entries(data).forEach(([k,v])=>$(k).value=v);localStorage.setItem('hedgex-config',JSON.stringify(data));log('Paper parameters saved in this browser.')}
 function load(){try{const d=JSON.parse(localStorage.getItem('hedgex-config')||'null');if(d)Object.entries(d).forEach(([k,v])=>{if($(k))$(k).value=v})}catch{}}
 function addFile(file){if(!file)return;const row=document.createElement('div');row.className='botfile';const name=document.createElement('span');name.textContent='▣  '+file.name+' · '+Math.round(file.size/1024)+' KB';const badge=document.createElement('b');badge.textContent='ADDED LOCALLY';badge.style.cssText='color:#e9bd68;font-size:9px';row.append(name,badge);$('botList').append(row);$('emptyBots').style.display='none';$('botCount').textContent=$('botList').children.length+' BOT FILE'+($('botList').children.length===1?'':'S');log('Bot file selected locally: '+file.name+'. Not executed or uploaded.')}
+
+const PAPER_KEY='hedgex-paper-bots-v1';
+let paperBots=[],activePaperBot=null,paperRunning=false,paperPaused=false,paperTicks=[],paperSignals=0,paperObserved=0,paperJournal=[];
+function safeNumber(id,min,max,fallback){const n=Number($(id).value);return Number.isFinite(n)?Math.min(max,Math.max(min,n)):fallback}
+function paperConfigFromForm(){return {id:activePaperBot?.id||('bot-'+Date.now()),name:$('paperBotName').value.trim().slice(0,48)||'Untitled strategy',market:$('paperMarket').value||$('market').value,window:safeNumber('paperWindow',2,60,5),threshold:safeNumber('paperThreshold',0.000001,1e12,.5),maxSignals:safeNumber('paperMaxSignals',1,100,10)}}
+function persistPaperBots(){try{localStorage.setItem(PAPER_KEY,JSON.stringify(paperBots))}catch{log('Could not save paper strategies in this browser (storage unavailable or full).')}}
+function renderPaperLibrary(){
+ const host=$('paperBotLibrary');if(!host)return;host.textContent='';
+ if(!paperBots.length){const empty=document.createElement('span');empty.className='subtle';empty.textContent='No saved strategies yet.';host.append(empty);return}
+ paperBots.forEach(bot=>{
+  const row=document.createElement('div');row.className='paper-bot-row';
+  const info=document.createElement('div');const title=document.createElement('strong');title.textContent=bot.name;const meta=document.createElement('small');meta.textContent=bot.market+' · '+bot.window+' ticks · threshold '+bot.threshold;info.append(title,meta);
+  const actions=document.createElement('div');actions.style.display='flex';actions.style.gap='6px';
+  const loadBtn=document.createElement('button');loadBtn.className='btn';loadBtn.textContent='Load';loadBtn.onclick=()=>loadPaperBot(bot.id);
+  const delBtn=document.createElement('button');delBtn.className='btn red';delBtn.textContent='Delete';delBtn.onclick=()=>{if(activePaperBot?.id===bot.id)stopPaperBot('Saved strategy deleted.');paperBots=paperBots.filter(x=>x.id!==bot.id);persistPaperBots();renderPaperLibrary();};
+  actions.append(loadBtn,delBtn);row.append(info,actions);host.append(row);
+ });
+}
+function loadPaperBot(id){const bot=paperBots.find(x=>x.id===id);if(!bot)return;if(paperRunning)stopPaperBot('Monitor stopped before loading another strategy.');activePaperBot={...bot};$('paperBotName').value=bot.name;$('paperMarket').value=bot.market;$('paperWindow').value=bot.window;$('paperThreshold').value=bot.threshold;$('paperMaxSignals').value=bot.maxSignals;updatePaperStatus('STOPPED','Strategy loaded. Connect the matching market feed and start the paper monitor.');}
+function savePaperBot(){
+ const bot=paperConfigFromForm();if(!bot.market){updatePaperStatus('NEEDS MARKET','Choose a market after loading Deriv symbols on the Dashboard.');return}
+ const index=paperBots.findIndex(x=>x.id===bot.id);if(index>=0)paperBots[index]=bot;else paperBots.unshift(bot);
+ activePaperBot={...bot};persistPaperBots();renderPaperLibrary();log('Saved paper strategy "'+bot.name+'". No orders or trades were placed.');updatePaperStatus('SAVED','Strategy saved locally. Connect its market feed to monitor signals.');
+}
+function updatePaperStatus(state,message){$('paperRuntimeState').textContent=state;$('paperRuntimeMessage').textContent=message;$('startPaperBot').disabled=paperRunning;$('pausePaperBot').disabled=!paperRunning;$('stopPaperBot').disabled=!paperRunning;$('pausePaperBot').textContent=paperPaused?'Resume':'Pause';}
+function paperEvent(message){paperJournal.unshift(new Date().toLocaleTimeString()+'  '+message);paperJournal=paperJournal.slice(0,40);const host=$('paperEvents');host.textContent='';paperJournal.forEach(line=>{const row=document.createElement('div');row.textContent=line;host.append(row)});}
+function startPaperBot(){
+ if(!activePaperBot){savePaperBot();if(!activePaperBot)return}
+ if(!socket||socket.readyState!==1){updatePaperStatus('WAITING FOR FEED','Connect the public Deriv market feed on Dashboard first.');log('Paper monitor needs an active public market feed.');return}
+ if($('market').value!==activePaperBot.market){updatePaperStatus('MARKET MISMATCH','Select '+activePaperBot.market+' on Dashboard and reconnect the feed.');return}
+ paperRunning=true;paperPaused=false;paperTicks=[];paperSignals=0;paperObserved=0;paperJournal=[];$('paperSignalCount').textContent='0';$('paperTickCount').textContent='0';$('paperLastSignal').textContent='—';$('paperCurrentMarket').textContent=activePaperBot.market;paperEvent('Paper monitor started for '+activePaperBot.market+'. Signals only; no orders.');updatePaperStatus('RUNNING','Monitoring public ticks. No Deriv contracts will be opened.');log('Paper signal monitor started for '+activePaperBot.market+'.');
+}
+function pausePaperBot(){if(!paperRunning)return;paperPaused=!paperPaused;updatePaperStatus(paperPaused?'PAUSED':'RUNNING',paperPaused?'Signal evaluation paused. Public market feed may continue.':'Signal evaluation resumed.');paperEvent(paperPaused?'Monitor paused.':'Monitor resumed.');}
+function stopPaperBot(message='Paper monitor stopped by user.'){if(!paperRunning){updatePaperStatus('STOPPED',message);return}paperRunning=false;paperPaused=false;updatePaperStatus('STOPPED',message);paperEvent(message);log(message);}
+function processPaperTick(price){
+ if(!paperRunning||paperPaused||!activePaperBot)return;
+ paperObserved++;paperTicks.push(price);if(paperTicks.length>activePaperBot.window+1)paperTicks.shift();$('paperTickCount').textContent=String(paperObserved);
+ if(paperSignals>=activePaperBot.maxSignals){stopPaperBot('Session signal limit reached.');return}
+ if(paperTicks.length<activePaperBot.window+1)return;
+ const baseline=paperTicks[0],delta=price-baseline;if(Math.abs(delta)<activePaperBot.threshold)return;
+ const direction=delta>0?'UP':'DOWN';paperSignals++;$('paperSignalCount').textContent=String(paperSignals);$('paperLastSignal').textContent=direction+' '+(delta>0?'+':'')+delta.toFixed(5);
+ paperEvent(direction+' signal · '+activePaperBot.market+' · move '+(delta>0?'+':'')+delta.toFixed(5)+' over '+activePaperBot.window+' ticks · signal only');
+ paperTicks=[price];if(paperSignals>=activePaperBot.maxSignals)stopPaperBot('Session signal limit reached.');
+}
+function loadPaperBots(){
+ try{const saved=JSON.parse(localStorage.getItem(PAPER_KEY)||'[]');if(Array.isArray(saved))paperBots=saved.filter(x=>x&&typeof x.id==='string'&&typeof x.name==='string'&&typeof x.market==='string'&&Number.isFinite(x.window)&&Number.isFinite(x.threshold)&&Number.isFinite(x.maxSignals))}catch{paperBots=[]}
+ renderPaperLibrary();
+ const market=$('market').value;if(market)$('paperMarket').value=market;
+}
+function syncPaperMarkets(){
+ const select=$('paperMarket'),previous=select.value;select.innerHTML='<option value="">Choose a Deriv market</option>';
+ [...$('market').querySelectorAll('optgroup')].forEach(group=>{const copy=document.createElement('optgroup');copy.label=group.label;[...group.options].forEach(o=>copy.append(o.cloneNode(true)));if(copy.options.length)select.append(copy)});
+ select.value=[...select.options].some(o=>o.value===previous)?previous:$('market').value;
+}
+async function checkBackendStatus(){
+ const label=$('backendStatus');if(!label)return;
+ if(!DERIV_BACKEND_URL){label.classList.remove('online');label.querySelector('span').textContent='Backend not deployed — local paper workspace only.';return}
+ try{const response=await fetch(DERIV_BACKEND_URL.replace(/\/$/,'')+'/api/v1/platform/status',{method:'GET',mode:'cors',credentials:'omit',headers:{'Accept':'application/json'}});
+  if(!response.ok)throw new Error('unavailable');const data=await response.json();label.classList.toggle('online',data?.platform==='HedgeX Pro');label.querySelector('span').textContent=data?.platform==='HedgeX Pro'?'API online · '+data.environment+' · execution '+data.orderExecution:'API response not recognized';
+ }catch{label.classList.remove('online');label.querySelector('span').textContent='Backend unreachable — local paper workspace only.'}
+}
+$('savePaperBot').onclick=savePaperBot;$('startPaperBot').onclick=startPaperBot;$('pausePaperBot').onclick=pausePaperBot;$('stopPaperBot').onclick=()=>stopPaperBot();
+
 $('market').onchange=e=>loadContracts(e.target.value);$('connect').onclick=connect;$('disconnect').onclick=disconnect;$('save').onclick=save;$('reset').onclick=()=>{localStorage.removeItem('hedgex-config');$('hhBarrier').value='1';$('hlBarrier').value='1';$('duration').value='5';$('stake').value='1.00';log('Parameters reset.')};$('addBot').onclick=()=>$('botFile').click();$('botFile').onchange=e=>{addFile(e.target.files[0]);e.target.value=''};$('loadBotShortcut').onclick=()=>$('botFile').click();$('analysisShortcut').onclick=()=>$('markets').scrollIntoView({behavior:'smooth'});$('searchBtn').onclick=()=>{const q=$('botSearch').value.trim().toLowerCase();[...$('botList').children].forEach(el=>el.style.display=el.textContent.toLowerCase().includes(q)?'flex':'none');if(q&&$('market').value.toLowerCase().includes(q))$('markets').scrollIntoView({behavior:'smooth'});};$('botSearch').addEventListener('keydown',e=>{if(e.key==='Enter')$('searchBtn').click()});$('clearLog').onclick=()=>{$('log').innerHTML='<div>Display reset. No trading activity was performed.</div>';};document.querySelectorAll('.summary-tabs button').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.summary-tabs button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');$('summaryBody').textContent=btn.dataset.tab==='summary'?'Your read-only market workspace is ready. No trades have been placed.':btn.dataset.tab==='transactions'?'No transactions — trade execution is disabled in Stage 1.':'Session journal: market-feed and workspace events appear in Recent Activity.'});
 function setDerivConnectionStatus(message){$('oauthStatus').textContent=message;$('tokenStatus').textContent=message;}
 if(DERIV_BACKEND_URL){$('derivOAuth').disabled=false;$('derivToken').disabled=false;$('derivTokenConnect').disabled=false;setDerivConnectionStatus('Ready to connect through the configured secure backend.');}
@@ -374,9 +487,10 @@ function loadManualContracts(symbol){
  }
 }
 $('manualMarket').addEventListener('change',e=>loadManualContracts(e.target.value));
-$('market').addEventListener('change',()=>{syncManualMarkets();$('chartMarketName').textContent=$('market').selectedOptions[0]?.textContent||'Choose a market on Dashboard';$('analysisSymbol').textContent=$('market').selectedOptions[0]?.textContent||'No market selected';});
+$('market').addEventListener('change',()=>{syncManualMarkets();syncPaperMarkets();$('chartMarketName').textContent=$('market').selectedOptions[0]?.textContent||'Choose a market on Dashboard';$('analysisSymbol').textContent=$('market').selectedOptions[0]?.textContent||'No market selected';});
 
 load();
+loadPaperBots();checkBackendStatus();
 $('market').innerHTML='<option value="">Loading Derived Indices…</option>';
 try{const ws=new WebSocket(ENDPOINT);let gotSymbols=false;const discoveryTimeout=setTimeout(()=>{if(!gotSymbols){log('Derived market list request timed out.');fallbackSymbols();try{ws.close()}catch{}}},9000);ws.onopen=()=>{log('Connected to Deriv market-data service; requesting all active symbols.');ws.send(JSON.stringify({active_symbols:'brief',req_id:1}))};ws.onmessage=e=>{try{const d=JSON.parse(e.data);if(d.error){log('Symbol discovery error: '+d.error.message);return}if(d.msg_type==='active_symbols'&&Array.isArray(d.active_symbols)){gotSymbols=true;clearTimeout(discoveryTimeout);symbolsReady(d.active_symbols);ws.close()}}catch{log('Could not read symbol-list response.')}};ws.onerror=()=>{clearTimeout(discoveryTimeout);log('Market-list WebSocket failed.');fallbackSymbols()}}catch(e){log('WebSocket unavailable in this browser: '+e.message);fallbackSymbols()}
 })();
