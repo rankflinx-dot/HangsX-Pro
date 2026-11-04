@@ -16,6 +16,9 @@ The status endpoint deliberately reports account authorization, bot runtime, and
 
 ## Run locally
 
+Run the automated API smoke tests with `npm test` before starting the service. The tests cover the health endpoint, security headers, the exact-origin CORS allowlist, honest capability reporting, and the absence of an unfinished token-connect route.
+
+
 1. Install Node.js 22 or later.
 2. Copy `.env.example` to `.env`.
 3. Set `HEDGEX_FRONTEND_ORIGIN` to the exact browser origin of the deployed site (for example, `https://rankflinx-dot.github.io`).
