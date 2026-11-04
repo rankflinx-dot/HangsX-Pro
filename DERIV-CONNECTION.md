@@ -2,45 +2,38 @@
 
 ## Current state
 
-The dashboard has UI for both Login with Deriv and API-token connection. The controls remain disabled until the secure backend is deployed and its public base URL is set in `DERIV_BACKEND_URL` in `index.html`. No OAuth client ID, secret, redirect URI, or deployment credential has been guessed or added. The repository currently has no backend, so account authorization cannot complete yet.
+HedgeX Pro currently uses Deriv's public market-data WebSocket without account authentication. The dashboard contains disabled account-connection controls, but no account authorization backend has been deployed. No Deriv app ID, OAuth client ID, client secret, callback URL, or user token is stored in this repository.
 
-The eight dashboard sections and existing styling are retained. Public market data continues to work without account authorization. The account connection is intended only for account information and market data. Do not enable buy, sell, trade, transfer, or bot execution APIs.
+The Node.js starter under `backend/` is only a health/status API. It deliberately has no OAuth, token-ingestion, account-session, bot-worker, or order-placement endpoints.
 
-## Deriv app registration still required
+## Official Deriv authentication flow
 
-Register an OAuth application in the Deriv developer/app management platform. Obtain the real client ID and configure the exact HTTPS callback URL served by the backend. The redirect URI must match the registered value exactly. Configure only the permissions Deriv provides for account information and market data; do not request trading permissions. Follow Deriv's current OAuth requirements for authorization code flow, PKCE (when supported/required), and state validation.
+For a browser-based platform, Deriv currently documents OAuth 2.0 Authorization Code with PKCE. The documented authorization endpoint is `https://auth.deriv.com/oauth2/auth` and the token endpoint is `https://auth.deriv.com/oauth2/token`. The registered redirect URI must match exactly. Generate a fresh cryptographically random `state` and PKCE verifier for each attempt, verify and consume state on callback, and exchange the authorization code server-side. Do not expose authorization codes or access tokens in frontend code, URLs, logs, or analytics.
 
-The OAuth client secret, if issued, belongs only in the backend secret manager. Never place it in this repository, GitHub Pages source, browser configuration, or a GitHub Actions artifact. The frontend `DERIV_BACKEND_URL` is a public URL and is not a secret.
+Deriv documents OAuth scopes including `trade`, `account_manage`, `application_read`, and `payment`. These are not a generic read-only account scope. Do not assume that a read-only trading-account permission exists or request `trade` merely to make login work. Before implementing account access, verify the exact current endpoint permissions and minimum scope required for each feature in the official Deriv API documentation. Keep any feature requiring trading permission unavailable until a separate demo-only execution phase is designed and reviewed.
 
-## Backend contract required by this frontend
+Deriv OAuth access tokens expire according to the returned `expires_in` value; the current guide says third-party apps do not receive refresh tokens. Reauthorize when required rather than assuming a refresh-token flow.
 
-Deploy an HTTPS backend and then set `DERIV_BACKEND_URL` in `index.html` to its public base URL. Implement these endpoints:
+Official references:
+- Authentication overview: https://developers.deriv.com/docs/intro/authentication/
+- OAuth 2.0 and PKCE: https://developers.deriv.com/docs/intro/oauth/
+- API workflows: https://developers.deriv.com/docs/workflows/
 
-- `GET /oauth/deriv/start`: generate and store a one-time `state` and PKCE verifier in a short-lived server-side session, then redirect the browser to Deriv's official consent page. The backend chooses the registered client ID, exact callback URL, and read-only scopes.
-- `GET /oauth/deriv/callback`: validate and consume `state`, exchange the authorization code server-side, validate the response, and establish a session. Never return an access token in the redirect URL or page markup. Use a secure, `HttpOnly`, `SameSite=Lax` session cookie (or stricter where compatible), with `Secure` enabled.
-- `POST /api/deriv/token/connect`: accept JSON `{ "token": "..." }` over HTTPS, validate the token with Deriv, and return only `{ "connected": true }` on success. Do not echo, persist, or log the submitted token or upstream response containing it. Establish a short-lived server-side session and discard the submitted token after validation. Return generic errors without token details.
+## Backend deployment
 
-The backend must allow CORS only from the deployed HedgeX Pro origin if it is hosted separately. Because this frontend sends the API-token request without cookies (`credentials: omit`), use a CSRF-resistant session establishment design; do not broaden CORS to `*`. Add rate limits, request-size limits, TLS, secret-manager storage, and redacted error logging. On logout/disconnect, revoke credentials when Deriv supports it and invalidate the server session.
+GitHub Pages serves static files only. It cannot host the persistent API, database, user sessions, or isolated bot workers required for the in-site platform. Deploy the Node.js service in `backend/` to a separate HTTPS-capable host.
 
-## Backend environment configuration
+Configure the exact public frontend origin using `HEDGEX_FRONTEND_ORIGIN`. Set `PORT` as required by the host. Do not add secrets to GitHub source or frontend JavaScript. The frontend API base URL, once configured, is public routing information and is not a secret.
 
-Use the backend platform's secret manager for deployment-specific values. Names below are suggested configuration keys, not populated credentials:
+## Next implementation gates
 
-```text
-DERIV_OAUTH_CLIENT_ID=<registered client ID>
-DERIV_OAUTH_CLIENT_SECRET=<server-side secret, only if Deriv issues one>
-DERIV_OAUTH_REDIRECT_URI=<exact registered HTTPS callback URL>
-DERIV_OAUTH_SCOPES=<only read-only account and market-data scopes supported by Deriv>
-SESSION_SECRET=<random server-side session signing/encryption secret>
-HEDGEX_FRONTEND_ORIGIN=<exact deployed frontend origin>
-```
+1. Choose a Node.js-capable HTTPS host and provide the backend's public origin.
+2. Add database-backed user accounts, verified email, password reset, secure server-side sessions, logout, and session revocation.
+3. Register a Deriv OAuth application and its exact HTTPS callback URL.
+4. Implement OAuth Authorization Code + PKCE on the backend after verifying current Deriv endpoint requirements and least-privilege scopes. Encrypt tokens at rest, restrict access, never log them, and handle expiry/re-authorization.
+5. Design a validated, versioned bot strategy format. Treat uploaded files as untrusted; do not execute arbitrary uploaded JavaScript in the API process or browser.
+6. Add isolated demo-only workers, per-user resource limits, audit events, user-set risk limits, and a reliable stop control. Keep live trading unavailable.
 
-Do not copy these placeholder values literally. Confirm current parameter names, authorization/token endpoints, and supported scopes against Deriv's official documentation during backend implementation. Never enable an execution scope.
+## Security boundary
 
-## Frontend configuration
-
-After deploying and securing the backend, set the public HTTPS base URL in `DERIV_BACKEND_URL` near the start of the inline script in `index.html`. This configures routing only; it must contain no secret. If the backend is unavailable or unset, both account connection methods remain disabled. The token input is cleared immediately on submit and again when the request finishes. No account token or OAuth credential is stored in `localStorage` or `sessionStorage` or written to the dashboard activity log.
-
-## Trading remains disabled
-
-The connection UI grants no order-entry functionality. Preserve disabled buy/sell controls, keep all contract execution routes absent, and do not add trading permissions when completing the backend. The existing local storage used for paper strategy settings is unrelated to account credentials.
+The current foundation accepts no Deriv credentials and sends no orders. Do not enable trading by changing a frontend flag. Never request payment or account-management permissions for bot operation. Any future order execution requires a separately reviewed authorization model, explicit user consent, demo testing, operational monitoring, and risk controls.
