@@ -254,6 +254,7 @@ main{width:100%}
     </div>
    </div>
    <div class="module-tile" style="margin-top:14px"><h3>Saved strategies</h3><p>Configurations are stored in this browser only. They are not synced to an account or uploaded to the server.</p><div id="paperBotLibrary"><span class="subtle">No saved strategies yet.</span></div></div>
+   <div class="module-tile" style="margin-top:14px"><h3>Paper session history</h3><p>Completed monitoring sessions are saved in this browser. Signal counts are observations only, not trade results or profitability.</p><div id="paperSessionHistory" aria-live="polite"><span class="subtle">No completed paper sessions yet.</span></div></div>
    <div class="page-note">Imported XML, JSON, JavaScript and text files remain separate from this native strategy builder. Imported files are listed locally only and are never executed by HedgeX Pro.</div>
   </section>
   <section class="page-view" id="page-free-bots" data-page-panel="free-bots">
@@ -341,7 +342,8 @@ function load(){try{const d=JSON.parse(localStorage.getItem('hedgex-config')||'n
 function addFile(file){if(!file)return;const row=document.createElement('div');row.className='botfile';const name=document.createElement('span');name.textContent='▣  '+file.name+' · '+Math.round(file.size/1024)+' KB';const badge=document.createElement('b');badge.textContent='ADDED LOCALLY';badge.style.cssText='color:#e9bd68;font-size:9px';row.append(name,badge);$('botList').append(row);$('emptyBots').style.display='none';$('botCount').textContent=$('botList').children.length+' BOT FILE'+($('botList').children.length===1?'':'S');log('Bot file selected locally: '+file.name+'. Not executed or uploaded.')}
 
 const PAPER_KEY='hedgex-paper-bots-v1';
-let paperBots=[],activePaperBot=null,paperRunning=false,paperPaused=false,paperTicks=[],paperSignals=0,paperObserved=0,paperJournal=[];
+const PAPER_HISTORY_KEY='hedgex-paper-sessions-v1';
+let paperBots=[],activePaperBot=null,paperRunning=false,paperPaused=false,paperTicks=[],paperSignals=0,paperObserved=0,paperJournal=[],paperHistory=[],paperSessionStartedAt=0,paperSessionLastSignal='—';
 function safeNumber(id,min,max,fallback){const n=Number($(id).value);return Number.isFinite(n)?Math.min(max,Math.max(min,n)):fallback}
 function paperConfigFromForm(){return {id:activePaperBot?.id||('bot-'+Date.now()),name:$('paperBotName').value.trim().slice(0,48)||'Untitled strategy',market:$('paperMarket').value||$('market').value,window:safeNumber('paperWindow',2,60,5),threshold:safeNumber('paperThreshold',0.000001,1e12,.5),maxSignals:safeNumber('paperMaxSignals',1,100,10)}}
 function persistPaperBots(){try{localStorage.setItem(PAPER_KEY,JSON.stringify(paperBots))}catch{log('Could not save paper strategies in this browser (storage unavailable or full).')}}
@@ -364,28 +366,48 @@ function savePaperBot(){
  activePaperBot={...bot};persistPaperBots();renderPaperLibrary();log('Saved paper strategy "'+bot.name+'". No orders or trades were placed.');updatePaperStatus('SAVED','Strategy saved locally. Connect its market feed to monitor signals.');
 }
 function updatePaperStatus(state,message){$('paperRuntimeState').textContent=state;$('paperRuntimeMessage').textContent=message;$('startPaperBot').disabled=paperRunning;$('pausePaperBot').disabled=!paperRunning;$('stopPaperBot').disabled=!paperRunning;$('pausePaperBot').textContent=paperPaused?'Resume':'Pause';}
+function persistPaperHistory(){try{localStorage.setItem(PAPER_HISTORY_KEY,JSON.stringify(paperHistory.slice(0,30)))}catch{log('Could not save paper session history in this browser.')}}
+function renderPaperHistory(){
+ const host=$('paperSessionHistory');if(!host)return;host.textContent='';
+ if(!paperHistory.length){const empty=document.createElement('span');empty.className='subtle';empty.textContent='No completed paper sessions yet.';host.append(empty);return}
+ paperHistory.slice(0,20).forEach(session=>{
+  const row=document.createElement('div');row.className='paper-bot-row';
+  const info=document.createElement('div');const title=document.createElement('strong');title.textContent=session.strategy+' · '+session.market;
+  const meta=document.createElement('small');meta.textContent=new Date(session.startedAt).toLocaleString()+' · '+Math.max(0,Math.round(session.durationSeconds))+' sec · '+session.ticks+' ticks';
+  const detail=document.createElement('small');detail.textContent=session.signals+' signals · '+session.lastSignal+' · '+session.reason;
+  info.append(title,meta,detail);row.append(info);host.append(row);
+ });
+}
 function paperEvent(message){paperJournal.unshift(new Date().toLocaleTimeString()+'  '+message);paperJournal=paperJournal.slice(0,40);const host=$('paperEvents');host.textContent='';paperJournal.forEach(line=>{const row=document.createElement('div');row.textContent=line;host.append(row)});}
 function startPaperBot(){
  if(!activePaperBot){savePaperBot();if(!activePaperBot)return}
  if(!socket||socket.readyState!==1){updatePaperStatus('WAITING FOR FEED','Connect the public Deriv market feed on Dashboard first.');log('Paper monitor needs an active public market feed.');return}
  if($('market').value!==activePaperBot.market){updatePaperStatus('MARKET MISMATCH','Select '+activePaperBot.market+' on Dashboard and reconnect the feed.');return}
- paperRunning=true;paperPaused=false;paperTicks=[];paperSignals=0;paperObserved=0;paperJournal=[];$('paperSignalCount').textContent='0';$('paperTickCount').textContent='0';$('paperLastSignal').textContent='—';$('paperCurrentMarket').textContent=activePaperBot.market;paperEvent('Paper monitor started for '+activePaperBot.market+'. Signals only; no orders.');updatePaperStatus('RUNNING','Monitoring public ticks. No Deriv contracts will be opened.');log('Paper signal monitor started for '+activePaperBot.market+'.');
+ paperRunning=true;paperPaused=false;paperTicks=[];paperSignals=0;paperObserved=0;paperJournal=[];paperSessionStartedAt=Date.now();paperSessionLastSignal='—';$('paperSignalCount').textContent='0';$('paperTickCount').textContent='0';$('paperLastSignal').textContent='—';$('paperCurrentMarket').textContent=activePaperBot.market;paperEvent('Paper monitor started for '+activePaperBot.market+'. Signals only; no orders.');updatePaperStatus('RUNNING','Monitoring public ticks. No Deriv contracts will be opened.');log('Paper signal monitor started for '+activePaperBot.market+'.');
 }
 function pausePaperBot(){if(!paperRunning)return;paperPaused=!paperPaused;updatePaperStatus(paperPaused?'PAUSED':'RUNNING',paperPaused?'Signal evaluation paused. Public market feed may continue.':'Signal evaluation resumed.');paperEvent(paperPaused?'Monitor paused.':'Monitor resumed.');}
-function stopPaperBot(message='Paper monitor stopped by user.'){if(!paperRunning){updatePaperStatus('STOPPED',message);return}paperRunning=false;paperPaused=false;updatePaperStatus('STOPPED',message);paperEvent(message);log(message);}
+function stopPaperBot(message='Paper monitor stopped by user.'){
+ if(!paperRunning){updatePaperStatus('STOPPED',message);return}
+ const endedAt=Date.now();
+ paperHistory.unshift({id:'session-'+paperSessionStartedAt,startedAt:paperSessionStartedAt,endedAt,durationSeconds:paperSessionStartedAt?((endedAt-paperSessionStartedAt)/1000):0,strategy:activePaperBot?.name||'Unknown strategy',market:activePaperBot?.market||'Unknown market',ticks:paperObserved,signals:paperSignals,lastSignal:paperSessionLastSignal,reason:message});
+ paperHistory=paperHistory.slice(0,30);persistPaperHistory();renderPaperHistory();paperSessionStartedAt=0;
+ paperRunning=false;paperPaused=false;updatePaperStatus('STOPPED',message);paperEvent(message);log(message);
+}
 function processPaperTick(price){
  if(!paperRunning||paperPaused||!activePaperBot)return;
  paperObserved++;paperTicks.push(price);if(paperTicks.length>activePaperBot.window+1)paperTicks.shift();$('paperTickCount').textContent=String(paperObserved);
  if(paperSignals>=activePaperBot.maxSignals){stopPaperBot('Session signal limit reached.');return}
  if(paperTicks.length<activePaperBot.window+1)return;
  const baseline=paperTicks[0],delta=price-baseline;if(Math.abs(delta)<activePaperBot.threshold)return;
- const direction=delta>0?'UP':'DOWN';paperSignals++;$('paperSignalCount').textContent=String(paperSignals);$('paperLastSignal').textContent=direction+' '+(delta>0?'+':'')+delta.toFixed(5);
+ const direction=delta>0?'UP':'DOWN';paperSignals++;$('paperSignalCount').textContent=String(paperSignals);$('paperLastSignal').textContent=direction+' '+(delta>0?'+':'')+delta.toFixed(5);paperSessionLastSignal=direction+' '+(delta>0?'+':'')+delta.toFixed(5);
  paperEvent(direction+' signal · '+activePaperBot.market+' · move '+(delta>0?'+':'')+delta.toFixed(5)+' over '+activePaperBot.window+' ticks · signal only');
  paperTicks=[price];if(paperSignals>=activePaperBot.maxSignals)stopPaperBot('Session signal limit reached.');
 }
 function loadPaperBots(){
  try{const saved=JSON.parse(localStorage.getItem(PAPER_KEY)||'[]');if(Array.isArray(saved))paperBots=saved.filter(x=>x&&typeof x.id==='string'&&typeof x.name==='string'&&typeof x.market==='string'&&Number.isFinite(x.window)&&Number.isFinite(x.threshold)&&Number.isFinite(x.maxSignals))}catch{paperBots=[]}
  renderPaperLibrary();
+ try{const history=JSON.parse(localStorage.getItem(PAPER_HISTORY_KEY)||'[]');if(Array.isArray(history))paperHistory=history.filter(x=>x&&typeof x.id==='string'&&Number.isFinite(x.startedAt)&&Number.isFinite(x.durationSeconds)&&Number.isFinite(x.ticks)&&Number.isFinite(x.signals)).slice(0,30)}catch{paperHistory=[]}
+ renderPaperHistory();
  const market=$('market').value;if(market)$('paperMarket').value=market;
 }
 function syncPaperMarkets(){
