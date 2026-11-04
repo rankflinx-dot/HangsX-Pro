@@ -307,7 +307,72 @@ $('builderMyBots').onclick=()=>{showPage('dashboard');$('bots').scrollIntoView({
 $('builderStrategy').onclick=()=>{showPage('dashboard');$('strategies').scrollIntoView({behavior:'smooth'});};
 $('freeBuilder').onclick=()=>showPage('bot-builder');
 function syncManualMarkets(){const manual=$('manualMarket'),current=manual.value;manual.innerHTML='<option value="">Choose from live markets</option>';[...$('market').querySelectorAll('optgroup')].forEach(group=>{const copy=document.createElement('optgroup');copy.label=group.label;[...group.options].forEach(o=>copy.append(o.cloneNode(true)));if(copy.options.length)manual.append(copy)});manual.value=[...manual.options].some(o=>o.value===current)?current:$('market').value;}
-function loadManualContracts(symbol){const picker=$('manualContract');picker.disabled=true;picker.innerHTML='<option value="">Loading available contracts…</option>';if(!symbol){picker.innerHTML='<option value="">Choose a market first</option>';return}if(window.manualContractSocket){try{window.manualContractSocket.close()}catch{}}const families=[['Accumulators',['ACCU']],['Vanillas',['VANILLALONGCALL','VANILLALONGPUT','CALL','PUT']],['Turbos',['TURBOSLONG','TURBOSSHORT']],['Multipliers',['MULTUP','MULTDOWN']],['Ups & Downs',['HIGHER','LOWER']],['Touch & No Touch',['ONETOUCH','NOTOUCH']],['Digits',['DIGITMATCH','DIGITDIFF','DIGITEVEN','DIGITODD','DIGITOVER','DIGITUNDER']]];const labels={ACCU:'Accumulator',VANILLALONGCALL:'Call',VANILLALONGPUT:'Put',TURBOSLONG:'Turbo Long',TURBOSSHORT:'Turbo Short',MULTUP:'Up',MULTDOWN:'Down',HIGHER:'Higher',LOWER:'Lower',CALL:'Rise / Call',PUT:'Fall / Put',ONETOUCH:'Touch',NOTOUCH:'No Touch',DIGITMATCH:'Matches',DIGITDIFF:'Differs',DIGITEVEN:'Even',DIGITODD:'Odd',DIGITOVER:'Over',DIGITUNDER:'Under'};let done=false;let ws;try{ws=new WebSocket(ENDPOINT);window.manualContractSocket=ws;const timer=setTimeout(()=>{if(done)return;done=true;picker.innerHTML='<option value="">Contract list timed out</option>';picker.disabled=true;try{ws.close()}catch{}},9000);ws.onopen=()=>ws.send(JSON.stringify({contracts_for:symbol,req_id:32}));ws.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch{return}if(d.error){if(done)return;done=true;clearTimeout(timer);picker.innerHTML='<option value="">Contracts unavailable for this market</option>';ws.close();return}if(d.msg_type!=='contracts_for'||!d.contracts_for||$('manualMarket').value!==symbol)return;done=true;clearTimeout(timer);const available=new Set((d.contracts_for.available||d.contracts_for.contracts||[]).map(c=>c.contract_type||c.contract_code||c.id).filter(Boolean));picker.innerHTML='';families.forEach(([family,codes])=>{const opts=codes.filter(code=>available.has(code));if(!opts.length)return;const group=document.createElement('optgroup');group.label=family;opts.forEach(code=>{const o=document.createElement('option');o.value=code;o.textContent=(labels[code]||code)+' · '+code;group.append(o)});picker.append(group)});if(!picker.options.length)picker.innerHTML='<option value="">No listed contracts available for this market</option>';picker.disabled=!picker.options.length;ws.close()};ws.onerror=()=>{if(done)return;done=true;clearTimeout(timer);picker.innerHTML='<option value="">Could not load contracts</option>';picker.disabled=true}}catch{picker.innerHTML='<option value="">Could not load contracts</option>';picker.disabled=true}}
+function loadManualContracts(symbol){
+ const picker=$('manualContract');
+ const families=[
+  {name:'Accumulators',items:[['ACCU','Accumulator']]},
+  {name:'Vanillas',items:[['CALL','Call'],['PUT','Put']]},
+  {name:'Turbos',items:[['TURBOSLONG','Turbo Long'],['TURBOSSHORT','Turbo Short']]},
+  {name:'Multipliers',items:[['MULTUP','Multiplier Up'],['MULTDOWN','Multiplier Down']]},
+  {name:'Ups & Downs',items:[['HIGHER','Higher'],['LOWER','Lower']]},
+  {name:'Touch & No Touch',items:[['ONETOUCH','Touch'],['NOTOUCH','No Touch']]},
+  {name:'Digits',items:[['DIGITMATCH','Matches'],['DIGITDIFF','Differs'],['DIGITEVEN','Even'],['DIGITODD','Odd'],['DIGITOVER','Over'],['DIGITUNDER','Under']]}
+ ];
+ picker.disabled=true;
+ picker.innerHTML='<option value="">Loading contract availability…</option>';
+ if(!symbol){picker.innerHTML='<option value="">Choose a market first</option>';return}
+ if(window.manualContractSocket){try{window.manualContractSocket.close()}catch{}}
+ let done=false,ws;
+ const render=(available,verified)=>{
+  picker.innerHTML='';
+  families.forEach(family=>{
+   const group=document.createElement('optgroup');group.label=family.name;
+   family.items.forEach(([code,label])=>{
+    const option=document.createElement('option');option.value=code;
+    const isAvailable=available.has(code);
+    option.textContent=label+' · '+code+(verified?(isAvailable?'':' · unavailable for this market'):' · availability not verified');
+    option.disabled=verified&&!isAvailable;
+    group.append(option);
+   });
+   picker.append(group);
+  });
+  picker.disabled=false;
+ };
+ try{
+  ws=new WebSocket(ENDPOINT);window.manualContractSocket=ws;
+  const timer=setTimeout(()=>{
+   if(done)return;done=true;
+   render(new Set(),false);
+   log('Contract availability could not be verified for '+symbol+'. All requested contract families are shown; availability is unverified.');
+   try{ws.close()}catch{}
+  },9000);
+  ws.onopen=()=>ws.send(JSON.stringify({contracts_for:symbol,req_id:32}));
+  ws.onmessage=e=>{
+   let d;try{d=JSON.parse(e.data)}catch{return}
+   if(d.error){
+    if(done)return;done=true;clearTimeout(timer);
+    render(new Set(),false);
+    log('Deriv could not verify contract availability for '+symbol+': '+d.error.message);
+    ws.close();return;
+   }
+   if(d.msg_type!=='contracts_for'||!d.contracts_for||$('manualMarket').value!==symbol)return;
+   done=true;clearTimeout(timer);
+   const raw=d.contracts_for.available||d.contracts_for.contracts||[];
+   const available=new Set(raw.map(c=>c.contract_type||c.contract_code||c.id).filter(Boolean));
+   render(available,true);
+   log('Displayed all 7 requested contract families. '+available.size+' contract codes reported for '+symbol+'; unavailable choices are disabled.');
+   ws.close();
+  };
+  ws.onerror=()=>{
+   if(done)return;done=true;clearTimeout(timer);
+   render(new Set(),false);
+   log('Contract availability could not be verified for '+symbol+'.');
+  };
+ }catch(e){
+  render(new Set(),false);
+  log('Contract list setup failed: '+e.message);
+ }
+}
 $('manualMarket').addEventListener('change',e=>loadManualContracts(e.target.value));
 $('market').addEventListener('change',()=>{syncManualMarkets();$('chartMarketName').textContent=$('market').selectedOptions[0]?.textContent||'Choose a market on Dashboard';$('analysisSymbol').textContent=$('market').selectedOptions[0]?.textContent||'No market selected';});
 
